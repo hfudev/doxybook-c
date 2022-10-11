@@ -109,12 +109,8 @@ dist/
 example/temp
 *-old
 .vscode
+.idea/
 temp/
 
 # Temporary Md files
-example/vuepress/api/*.md
-example/gitbook/api/*.md
-example/docsify/api/*.md
-example/mkdocs/docs/api/*.md
-example/gitbook/SUMMARY.md
-example/mkdocs/site
+example/src/docs/api/
