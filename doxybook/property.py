@@ -1,8 +1,9 @@
 import re
 from xml.etree.ElementTree import Element as Element
-from doxybook.xml_parser import XmlParser
+
 from doxybook.constants import Kind
 from doxybook.markdown import escape
+from doxybook.xml_parser import XmlParser
 
 
 class Property:
@@ -74,12 +75,12 @@ class Property:
                     incl = self.parser.reference_as_str(includes)
 
                 if includes.get('local') == 'yes':
-                    ret.append('"' + incl + '"')  
+                    ret.append('"' + incl + '"')
                 else:
                     if plain:
-                        ret.append('<' + incl + '>')  
+                        ret.append('<' + incl + '>')
                     else:
-                        ret.append('&lt;' + incl + '&gt;')  
+                        ret.append('&lt;' + incl + '&gt;')
             return ret
 
         def has(self) -> bool:
@@ -153,7 +154,7 @@ class Property:
                 defval = param.find('defval')
                 if defval is not None:
                     p += '=' + self.parser.paras_as_str(defval, plain=plain)
-                
+
                 ret.append(p.strip())
             return ret
 
@@ -187,7 +188,11 @@ class Property:
                         declname = param.find('declname')
                         if declname is None:
                             declname = param.find('type')
-                        ret.append(self.parser.paras_as_str(type, plain=plain) + ' ' + self.parser.paras_as_str(declname, plain=plain))
+                        ret.append(
+                            self.parser.paras_as_str(type, plain=plain)
+                            + ' '
+                            + self.parser.paras_as_str(declname, plain=plain)
+                        )
             return ret
 
         def has(self) -> bool:
@@ -207,7 +212,7 @@ class Property:
 
         def has(self) -> bool:
             return True
-        
+
     class Specifiers:
         def __init__(self, xml: Element, parser: XmlParser, kind: Kind):
             self.xml = xml
@@ -221,7 +226,7 @@ class Property:
             argss = self.xml.find('argsstring')
             if argss is None or argss.text is None:
                 return ''
-            
+
             argsstring = argss.text
             ret = []
 
@@ -251,7 +256,7 @@ class Property:
                 ret.append('= 0')
 
             return ' '.join(ret)
-        
+
         def has(self) -> bool:
             return self.xml.find('argsstring') is not None
 
@@ -332,7 +337,7 @@ class Property:
             programlisting = self.xml.find('programlisting')
             if programlisting is None:
                 return ''
-            
+
             return self.parser.programlisting_as_str(programlisting)
 
         def has(self) -> bool:

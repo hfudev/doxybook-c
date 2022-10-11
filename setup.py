@@ -1,11 +1,11 @@
+from subprocess import PIPE, Popen
+
 from setuptools import setup
-from subprocess import Popen, PIPE
 
 
 def git_describe_abbrev():
     try:
-        p = Popen(['git', 'describe', '--abbrev=0'],
-                  stdout=PIPE, stderr=PIPE)
+        p = Popen(['git', 'describe', '--abbrev=0'], stdout=PIPE, stderr=PIPE)
         p.stderr.close()
         line = p.stdout.readlines()[0]
         return line.strip().decode('utf-8')[1:]

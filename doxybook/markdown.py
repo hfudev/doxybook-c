@@ -1,11 +1,13 @@
 from typing import List
 
+
 def escape(s: str) -> str:
     ret = s.replace('*', '\\*')
     ret = ret.replace('_', '\\_')
     ret = ret.replace('<', '&lt;')
     ret = ret.replace('>', '&gt;')
     return ret
+
 
 class MdRenderer:
     def __init__(self):
@@ -21,6 +23,7 @@ class MdRenderer:
             self.output += '\n'
             self.eol_flag = True
 
+
 class Md:
     def __init__(self, children: List['Md']):
         self.children = children
@@ -31,6 +34,7 @@ class Md:
     def extend(self, child: List['Md']):
         self.children.extend(child)
 
+
 class Text:
     def __init__(self, text: str):
         self.text = text
@@ -39,12 +43,14 @@ class Text:
         if self.text:
             f.write(escape(self.text))
 
+
 class Br:
     def __init__(self):
         pass
 
     def render(self, f: MdRenderer, indent: str):
         f.write('\n\n')
+
 
 class MdHint(Md):
     def __init__(self, children: List[Md], typ: str, title: str):
@@ -58,6 +64,7 @@ class MdHint(Md):
             child.render(f, '')
         f.write(':::\n')
 
+
 class MdBold(Md):
     def __init__(self, children: List[Md]):
         Md.__init__(self, children)
@@ -68,6 +75,7 @@ class MdBold(Md):
             child.render(f, '')
         f.write('**')
 
+
 class MdImage:
     def __init__(self, url: str):
         self.url = url
@@ -75,19 +83,21 @@ class MdImage:
     def render(self, f: MdRenderer, indent: str):
         f.write('![Image](' + self.url + ')')
 
-class Code():
+
+class Code:
     def __init__(self, text: str):
         self.text = text
 
     def render(self, f: MdRenderer, indent: str):
         f.write('`' + self.text + '`')
 
+
 class MdCodeBlock:
-    def __init__(self, lines: List[str], lang:str = 'cpp'):
+    def __init__(self, lines: List[str], lang: str = 'cpp'):
         self.lines = lines
         self.lang = lang
 
-    def set_lang(self, lang:str):
+    def set_lang(self, lang: str):
         self.lang = lang
 
     def append(self, line: str):
@@ -100,6 +110,7 @@ class MdCodeBlock:
             f.write('\n')
         f.write('````\n\n')
 
+
 class MdBlockQuote(Md):
     def __init__(self, children: List[Md]):
         Md.__init__(self, children)
@@ -111,6 +122,7 @@ class MdBlockQuote(Md):
             child.render(f, '')
             f.write('\n')
 
+
 class MdItalic(Md):
     def __init__(self, children: List[Md]):
         Md.__init__(self, children)
@@ -121,6 +133,7 @@ class MdItalic(Md):
             child.render(f, '')
         f.write('_')
 
+
 class MdParagraph(Md):
     def __init__(self, children: List[Md]):
         Md.__init__(self, children)
@@ -129,6 +142,7 @@ class MdParagraph(Md):
         for child in self.children:
             child.render(f, indent)
         f.eol()
+
 
 class MdLink(Md):
     def __init__(self, children: List[Md], url: str):
@@ -141,6 +155,7 @@ class MdLink(Md):
             child.render(f, '')
         f.write('](' + self.url + ')')
 
+
 class MdList(Md):
     def __init__(self, children: List[Md]):
         Md.__init__(self, children)
@@ -152,6 +167,7 @@ class MdList(Md):
                 f.write(indent + '* ')
             child.render(f, indent + '  ')
 
+
 class MdLine:
     def __init__(self):
         pass
@@ -160,6 +176,7 @@ class MdLine:
         f.eol()
         f.write('----------------------------------------')
         f.eol()
+
 
 class MdHeader(Md):
     def __init__(self, level: int, children: List[Md]):
@@ -173,6 +190,7 @@ class MdHeader(Md):
         f.write('\n')
         f.eol()
 
+
 class MdTableCell(Md):
     def __init__(self, children: List[Md]):
         Md.__init__(self, children)
@@ -180,6 +198,7 @@ class MdTableCell(Md):
     def render(self, f: MdRenderer, indent: str):
         for child in self.children:
             child.render(f, indent)
+
 
 class MdTableRow(Md):
     def __init__(self, children: List[Md]):
@@ -193,10 +212,11 @@ class MdTableRow(Md):
             f.write('|')
         f.eol()
 
+
 class MdTable(Md):
     def __init__(self):
         Md.__init__(self, [])
-    
+
     def render(self, f: MdRenderer, indent: str):
         is_first = True
         f.eol()

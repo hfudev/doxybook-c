@@ -1,8 +1,9 @@
 import os
 from xml.etree import ElementTree
-from doxybook.node import Node
-from doxybook.constants import Kind, Visibility
+
 from doxybook.cache import Cache
+from doxybook.constants import Kind, Visibility
+from doxybook.node import Node
 from doxybook.xml_parser import XmlParser
 
 
@@ -24,19 +25,47 @@ class Doxygen:
             kind = Kind.from_str(compound.get('kind'))
             refid = compound.get('refid')
             if kind.is_language():
-                node = Node(os.path.join(index_path, refid + '.xml'), None, self.cache, self.parser, self.root, options=self._options)
+                node = Node(
+                    os.path.join(index_path, refid + '.xml'),
+                    None,
+                    self.cache,
+                    self.parser,
+                    self.root,
+                    options=self._options,
+                )
                 node._visibility = Visibility.PUBLIC
                 self.root.add_child(node)
             if kind == Kind.GROUP:
-                node = Node(os.path.join(index_path, refid + '.xml'), None, self.cache, self.parser, self.root, options=self._options)
+                node = Node(
+                    os.path.join(index_path, refid + '.xml'),
+                    None,
+                    self.cache,
+                    self.parser,
+                    self.root,
+                    options=self._options,
+                )
                 node._visibility = Visibility.PUBLIC
                 self.groups.add_child(node)
             if kind == Kind.FILE or kind == Kind.DIR:
-                node = Node(os.path.join(index_path, refid + '.xml'), None, self.cache, self.parser, self.root, options=self._options)
+                node = Node(
+                    os.path.join(index_path, refid + '.xml'),
+                    None,
+                    self.cache,
+                    self.parser,
+                    self.root,
+                    options=self._options,
+                )
                 node._visibility = Visibility.PUBLIC
                 self.files.add_child(node)
             if kind == Kind.PAGE:
-                node = Node(os.path.join(index_path, refid + '.xml'), None, self.cache, self.parser, self.root, options=self._options)
+                node = Node(
+                    os.path.join(index_path, refid + '.xml'),
+                    None,
+                    self.cache,
+                    self.parser,
+                    self.root,
+                    options=self._options,
+                )
                 node._visibility = Visibility.PUBLIC
                 self.pages.add_child(node)
 

@@ -40,8 +40,9 @@ OVERLOAD_OPERATORS = [
     'operator*',
     'operator&',
     'operator->',
-    'operator->*'
+    'operator->*',
 ]
+
 
 class Kind(Enum):
     NONE = 'none'
@@ -110,10 +111,10 @@ class Kind(Enum):
         return self == Kind.FILE
 
     def is_dir(self) -> bool:
-        return self == Kind.DIR    
+        return self == Kind.DIR
 
     def is_page(self) -> bool:
-        return self == Kind.PAGE   
+        return self == Kind.PAGE
 
     def is_language(self) -> bool:
         LANGUAGE = [
@@ -128,7 +129,7 @@ class Kind(Enum):
             Kind.ENUMVALUE,
             Kind.UNION,
             Kind.INTERFACE,
-            Kind.FRIEND
+            Kind.FRIEND,
         ]
 
         if self in LANGUAGE:
@@ -136,7 +137,13 @@ class Kind(Enum):
         return False
 
     def is_parent(self) -> bool:
-        return self == Kind.NAMESPACE or self == Kind.CLASS or self == Kind.STRUCT or self == Kind.UNION or self == Kind.INTERFACE
+        return (
+            self == Kind.NAMESPACE
+            or self == Kind.CLASS
+            or self == Kind.STRUCT
+            or self == Kind.UNION
+            or self == Kind.INTERFACE
+        )
 
     def is_member(self) -> bool:
         return self.is_language() and not self.is_parent()
@@ -145,8 +152,9 @@ class Kind(Enum):
     def from_str(s: str) -> 'Kind':
         try:
             return Kind(s)
-        except Exception as e:
+        except:
             return Kind.NONE
+
 
 class Visibility(Enum):
     PUBLIC = 'public'

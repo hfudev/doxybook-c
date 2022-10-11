@@ -1,0 +1,43 @@
+# See https://pre-commit.com for more information
+# See https://pre-commit.com/hooks.html for more hooks
+
+exclude: |
+  (?x)^(
+    .*tests/fixtures/.+|
+  )$
+
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.3.0
+    hooks:
+      - id: trailing-whitespace
+        exclude: &whitespace_excludes |
+          (?x)^(
+            .+\.(md|rst|map|bin)|
+            .+test.*\/.*expected.*|
+          )$
+      - id: end-of-file-fixer
+        exclude: *whitespace_excludes
+      - id: mixed-line-ending
+        args: [ '-f=lf' ]
+      - id: double-quote-string-fixer
+  - repo: https://github.com/ikamensh/flynt/
+    rev: '0.76'
+    hooks:
+      - id: flynt
+  - repo: https://github.com/psf/black
+    rev: 22.10.0
+    hooks:
+      - id: black
+        args: [ '--skip-string-normalization', '-l', '120' ]
+  - repo: https://gitlab.com/pycqa/flake8
+    rev: 3.9.2
+    hooks:
+      - id: flake8
+        # E1/W1 Indentation
+        # E2/W2 Whitespace
+        # E3/W3 Blank line
+        # E4/W4 Import
+        # E5/W5 Line Length
+        # E722 do not use bare 'except' (temporary workaround)
+        args: ['--ignore', 'E1,W1,E2,W2,E3,W3,E4,W4,E5,W5,E722']
