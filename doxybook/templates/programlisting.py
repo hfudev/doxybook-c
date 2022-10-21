@@ -6,7 +6,7 @@ TEMPLATE = """
 {{'**>**'|indent(1, true)}} [**{{child.name_long if node.is_group else child.name_short}}**]({{child.url}})
 {%- endfor %}
 
-[Go to the documentation of this file.]({{node.url}}) 
+[Go to the documentation of this file.]({{node.url}})
 
 {{node.programlisting}}
 """

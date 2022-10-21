@@ -1,18 +1,26 @@
 import os
-import re
-import traceback
 from xml.etree import ElementTree
 from xml.etree.ElementTree import Element as Element
-from doxybook.constants import Kind, Visibility, OVERLOAD_OPERATORS
+
 from doxybook.cache import Cache
-from doxybook.xml_parser import XmlParser
+from doxybook.constants import OVERLOAD_OPERATORS, Kind, Visibility
 from doxybook.markdown import escape
-from doxybook.utils import split_safe
 from doxybook.property import Property
+from doxybook.utils import split_safe
+from doxybook.xml_parser import XmlParser
 
 
 class Node:
-    def __init__(self, xml_file: str, xml: Element, cache: Cache, parser: XmlParser, parent: 'Node', refid: str = None, options: dict = {}):
+    def __init__(
+        self,
+        xml_file: str,
+        xml: Element,
+        cache: Cache,
+        parser: XmlParser,
+        parent: 'Node',
+        refid: str = None,
+        options: dict = {},
+    ):
         self._children: ['Node'] = []
         self._cache: Cache = cache
         self._parser: XmlParser = parser
@@ -39,7 +47,7 @@ class Node:
 
             print('Parsing: ' + self._refid)
             self._check_for_children()
-            
+
             title = self._xml.find('title')
             if title is not None:
                 self._title = title.text
@@ -88,7 +96,14 @@ class Node:
                     continue
                 except:
                     pass
-            child = Node(os.path.join(self._dirname, refid + '.xml'), None, self._cache, self._parser, self, options=self._options)
+            child = Node(
+                os.path.join(self._dirname, refid + '.xml'),
+                None,
+                self._cache,
+                self._parser,
+                self,
+                options=self._options,
+            )
             child._visibility = Visibility.PUBLIC
             self.add_child(child)
 
@@ -97,7 +112,7 @@ class Node:
             prot = Visibility(innerclass.get('prot'))
             if prot == Visibility.PRIVATE:
                 continue
-                
+
             if self._kind == Kind.GROUP or self._kind == Kind.DIR or self._kind == Kind.FILE:
                 try:
                     child = self._cache.get(refid)
@@ -107,9 +122,24 @@ class Node:
                     pass
 
             try:
-                child = Node(os.path.join(self._dirname, refid + '.xml'), None, self._cache, self._parser, self, options=self._options)
-            except FileNotFoundError as e:
-                child = Node(os.path.join(self._dirname, refid + '.xml'), Element('compounddef'), self._cache, self._parser, self, refid=refid, options=self._options)
+                child = Node(
+                    os.path.join(self._dirname, refid + '.xml'),
+                    None,
+                    self._cache,
+                    self._parser,
+                    self,
+                    options=self._options,
+                )
+            except FileNotFoundError:
+                child = Node(
+                    os.path.join(self._dirname, refid + '.xml'),
+                    Element('compounddef'),
+                    self._cache,
+                    self._parser,
+                    self,
+                    refid=refid,
+                    options=self._options,
+                )
                 child._name = innerclass.text
             child._visibility = prot
             self.add_child(child)
@@ -124,7 +154,14 @@ class Node:
                 except:
                     pass
 
-            child = Node(os.path.join(self._dirname, refid + '.xml'), None, self._cache, self._parser, self, options=self._options)
+            child = Node(
+                os.path.join(self._dirname, refid + '.xml'),
+                None,
+                self._cache,
+                self._parser,
+                self,
+                options=self._options,
+            )
             child._visibility = Visibility.PUBLIC
             self.add_child(child)
 
@@ -138,7 +175,14 @@ class Node:
                 except:
                     pass
 
-            child = Node(os.path.join(self._dirname, refid + '.xml'), None, self._cache, self._parser, self, options=self._options)
+            child = Node(
+                os.path.join(self._dirname, refid + '.xml'),
+                None,
+                self._cache,
+                self._parser,
+                self,
+                options=self._options,
+            )
             child._visibility = Visibility.PUBLIC
             self.add_child(child)
 
@@ -153,7 +197,14 @@ class Node:
                 except:
                     pass
 
-            child = Node(os.path.join(self._dirname, refid + '.xml'), None, self._cache, self._parser, self, options=self._options)
+            child = Node(
+                os.path.join(self._dirname, refid + '.xml'),
+                None,
+                self._cache,
+                self._parser,
+                self,
+                options=self._options,
+            )
             child._visibility = Visibility.PUBLIC
             self.add_child(child)
 
@@ -175,7 +226,7 @@ class Node:
     def _check_attrs(self):
         prot = self._xml.get('prot')
         self._visibility = Visibility(prot) if prot is not None else Visibility.PUBLIC
-    
+
         static = self._xml.get('static')
         self._static = static == 'yes'
 
@@ -436,7 +487,7 @@ class Node:
         if self.is_dir or self.is_file:
             return self._name.split('/')
         return split_safe(self._name, '::')
-    
+
     @property
     def name_short(self) -> str:
         return escape(self.name_tokens[-1])
@@ -491,7 +542,7 @@ class Node:
     def overload_suffix(self) -> str:
         if self.is_operator:
             return ''
-        
+
         total = self.overload_total
         if total > 1:
             return '[' + str(self.overload_num) + '/' + str(total) + ']'
@@ -540,7 +591,7 @@ class Node:
             return ''
         else:
             return self.kind.value
-    
+
     @property
     def codeblock(self) -> str:
         code = []
@@ -575,7 +626,7 @@ class Node:
         elif self.is_enum:
             if self._values.has():
                 code.append('enum ' + self.name_full_unescaped + ' {')
-                
+
                 values = []
                 for enumvalue in self._xml.findall('enumvalue'):
                     p = enumvalue.find('name').text
@@ -583,7 +634,7 @@ class Node:
                     if initializer is not None:
                         p += ' ' + self._parser.paras_as_str(initializer, plain=True)
                     values.append(p)
-                    
+
                 for i, value in enumerate(values):
                     if i + 1 >= len(values):
                         code.append('    ' + value)
@@ -651,7 +702,7 @@ class Node:
     @property
     def has_brief(self) -> bool:
         return self._brief.has()
-    
+
     @property
     def brief(self) -> str:
         return self._brief.md()
@@ -752,6 +803,7 @@ class Node:
             return self._cache.get(reimp.get('refid'))
         else:
             return None
+
 
 class DummyNode:
     def __init__(self, name_long: str, derived_classes: [Node], kind: Kind):

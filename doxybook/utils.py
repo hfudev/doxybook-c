@@ -15,6 +15,7 @@ def lookahead(iterable):
     # Report the last value.
     yield last, False
 
+
 def contains(a, pos, b):
     ai = pos
     bi = 0
@@ -27,6 +28,7 @@ def contains(a, pos, b):
         bi += 1
     return True
 
+
 def split_safe(s: str, delim: str) -> [str]:
     tokens = []
     i = 0
@@ -34,8 +36,8 @@ def split_safe(s: str, delim: str) -> [str]:
     inside = 0
     while i < len(s):
         c = s[i]
-        if i == len(s)-1:
-            tokens.append(s[last:i+1])
+        if i == len(s) - 1:
+            tokens.append(s[last : i + 1])
         if c == '<' or c == '[' or c == '{' or c == '(':
             inside += 1
             i += 1

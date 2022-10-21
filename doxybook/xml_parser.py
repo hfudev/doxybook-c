@@ -1,8 +1,27 @@
 from xml.etree.ElementTree import Element as Element
-from doxybook.markdown import Md, MdRenderer, MdParagraph, MdTable, Code, MdTableRow, MdCodeBlock, MdTableCell, MdHeader, MdImage, MdList, MdBlockQuote, MdLink, MdBold, MdItalic, MdHint, Text, Br
-from doxybook.cache import Cache
-from doxybook.utils import lookahead
 
+from doxybook.cache import Cache
+from doxybook.markdown import (
+    Br,
+    Code,
+    Md,
+    MdBlockQuote,
+    MdBold,
+    MdCodeBlock,
+    MdHeader,
+    MdHint,
+    MdImage,
+    MdItalic,
+    MdLink,
+    MdList,
+    MdParagraph,
+    MdRenderer,
+    MdTable,
+    MdTableCell,
+    MdTableRow,
+    Text,
+)
+from doxybook.utils import lookahead
 
 SIMPLE_SECTIONS = {
     'see': 'See also:',
@@ -25,14 +44,11 @@ SIMPLE_SECTIONS = {
     'attention': 'Attention:',
     'invariant': 'Invariant:',
     'exception': 'Exception:',
-    'date': 'Date:'
+    'date': 'Date:',
 }
 
-SIMPLE_SECTIONS_HINTS_VUEPRESS = {
-    'note': 'tip',
-    'bug': 'danger',
-    'warning': 'warning'
-}
+SIMPLE_SECTIONS_HINTS_VUEPRESS = {'note': 'tip', 'bug': 'danger', 'warning': 'warning'}
+
 
 class XmlParser:
     def __init__(self, cache: Cache, target: str = 'gitbook', hints: bool = True):
@@ -77,7 +93,7 @@ class XmlParser:
             return ret
         if p.text:
             ret.append(p.text.strip())
-        for item in p.getchildren():
+        for item in p:
             ret.extend(self.plain(item))
         if p.tail:
             ret.append(p.tail.strip())
@@ -92,7 +108,13 @@ class XmlParser:
             for codeline in p.findall('codeline'):
                 line = ''
                 for highlight in codeline.findall('highlight'):
-                    if not got_lang and len(highlight.getchildren()) == 0 and highlight.text is not None and highlight.text.startswith('{') and highlight.text.endswith('}'):
+                    if (
+                        not got_lang
+                        and len(highlight) == 0
+                        and highlight.text is not None
+                        and highlight.text.startswith('{')
+                        and highlight.text.endswith('}')
+                    ):
                         lang = highlight.text[1:-1]
                         code.set_lang(lang)
                         got_lang = True
@@ -100,7 +122,7 @@ class XmlParser:
                     else:
                         if highlight.text is not None:
                             line += highlight.text
-                        for c in highlight.getchildren():
+                        for c in highlight:
                             if c.tag == 'sp':
                                 line += ' '
                             if c.text:
@@ -122,7 +144,7 @@ class XmlParser:
                 ret.append(Text(' '))
             else:
                 ret.append(Text(p.text))
-        for item in p.getchildren():
+        for item in p:
             # para
             if item.tag == 'para':
                 ret.append(MdParagraph(self.paras(item)))
@@ -138,7 +160,7 @@ class XmlParser:
                 text = []
                 if item.text:
                     text.append(item.text)
-                for i in item.getchildren():
+                for i in item:
                     text.extend(self.plain(i))
                 ret.append(Code(' '.join(text)))
 
@@ -230,10 +252,9 @@ class XmlParser:
             # variablelist
             elif item.tag == 'variablelist':
                 varlistentry = item.find('varlistentry')
-                
+
                 ret.append(MdHeader(4, self.paras(varlistentry.find('term'))))
 
-                term = varlistentry.find('term')
                 for listitem in item.findall('listitem'):
                     for para in listitem.findall('para'):
                         ret.append(MdParagraph(self.paras(para)))

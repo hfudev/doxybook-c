@@ -1,26 +1,26 @@
 import os
 import re
 import string
-import traceback
 from typing import TextIO
-from jinja2 import Template
-from jinja2.exceptions import TemplateSyntaxError, TemplateError
-from jinja2 import StrictUndefined, Undefined
-from doxybook.node import Node, DummyNode
+
+from jinja2 import StrictUndefined, Template, Undefined
+from jinja2.exceptions import TemplateError, TemplateSyntaxError
+
 from doxybook.constants import Kind
+from doxybook.node import DummyNode, Node
 from doxybook.templates.annotated import TEMPLATE as ANNOTATED_TEMPLATE
+from doxybook.templates.classes import TEMPLATE as CLASSES_TEMPLATE
+from doxybook.templates.files import TEMPLATE as FILES_TEMPLATE
+from doxybook.templates.hierarchy import TEMPLATE as HIEARARCHY_TEMPLATE
+from doxybook.templates.index import TEMPLATE as INDEX_TEMPLATE
 from doxybook.templates.member import TEMPLATE as MEMBER_TEMPLATE
 from doxybook.templates.member_definition import TEMPLATE as MEMBER_DEFINITION_TEMPLATE
 from doxybook.templates.member_table import TEMPLATE as MEMBER_TABLE_TEMPLATE
-from doxybook.templates.namespaces import TEMPLATE as NAMESPACES_TEMPLATE
-from doxybook.templates.classes import TEMPLATE as CLASSES_TEMPLATE
-from doxybook.templates.hierarchy import TEMPLATE as HIEARARCHY_TEMPLATE
-from doxybook.templates.index import TEMPLATE as INDEX_TEMPLATE
 from doxybook.templates.modules import TEMPLATE as MODULES_TEMPLATE
-from doxybook.templates.files import TEMPLATE as FILES_TEMPLATE
-from doxybook.templates.programlisting import TEMPLATE as PROGRAMLISTING_TEMPLATE
+from doxybook.templates.namespaces import TEMPLATE as NAMESPACES_TEMPLATE
 from doxybook.templates.page import TEMPLATE as PAGE_TEMPLATE
 from doxybook.templates.pages import TEMPLATE as PAGES_TEMPLATE
+from doxybook.templates.programlisting import TEMPLATE as PROGRAMLISTING_TEMPLATE
 
 LETTERS = string.ascii_lowercase + '~_@'
 
@@ -40,8 +40,10 @@ ADDITIONAL_FILES = {
     'Class Member Enumerations': 'class_member_enums.md',
 }
 
+
 def generate_link(name, url) -> str:
     return '* [' + name + '](' + url + ')\n'
+
 
 class Generator:
     def __init__(self, ignore_errors: bool = False, options: dict = {}):
@@ -51,7 +53,7 @@ class Generator:
         if not ignore_errors:
             on_undefined_class = StrictUndefined
 
-        try: 
+        try:
             self.annotated_template = Template(ANNOTATED_TEMPLATE, undefined=on_undefined_class)
             self.member_template = Template(MEMBER_TEMPLATE, undefined=on_undefined_class)
             self.member_definition_template = Template(MEMBER_DEFINITION_TEMPLATE, undefined=on_undefined_class)
@@ -69,13 +71,13 @@ class Generator:
             raise Exception(str(e) + ' at line: ' + str(e.lineno))
 
     def _render(self, tmpl: Template, path: str, data: dict) -> str:
-        try: 
+        try:
             print('Generating', path)
             data.update(self.options)
             output = tmpl.render(data)
 
             with open(path, 'w', encoding='utf-8') as file:
-                file.write(output) 
+                file.write(output)
         except TemplateError as e:
             raise Exception(str(e))
 
@@ -100,41 +102,31 @@ class Generator:
     def annotated(self, output_dir: str, nodes: [Node]):
         path = os.path.join(output_dir, 'annotated.md')
 
-        data = {
-            'nodes': nodes
-        }
-        self._render(self.annotated_template, path, data) 
+        data = {'nodes': nodes}
+        self._render(self.annotated_template, path, data)
 
     def programlisting(self, output_dir: str, node: [Node]):
         path = os.path.join(output_dir, node.refid + '_source.md')
 
-        data = {
-            'node': node
-        }
-        self._render(self.programlisting_template, path, data) 
+        data = {'node': node}
+        self._render(self.programlisting_template, path, data)
 
     def fileindex(self, output_dir: str, nodes: [Node]):
         path = os.path.join(output_dir, 'files.md')
 
-        data = {
-            'nodes': nodes
-        }
-        self._render(self.files_template, path, data) 
+        data = {'nodes': nodes}
+        self._render(self.files_template, path, data)
 
     def namespaces(self, output_dir: str, nodes: [Node]):
         path = os.path.join(output_dir, 'namespaces.md')
 
-        data = {
-            'nodes': nodes
-        }
+        data = {'nodes': nodes}
         self._render(self.namespaces_template, path, data)
 
     def page(self, output_dir: str, node: Node):
         path = os.path.join(output_dir, node.name + '.md')
 
-        data = {
-            'node': node
-        }
+        data = {'node': node}
         self._render(self.page_template, path, data)
 
     def pages(self, output_dir: str, nodes: [Node]):
@@ -144,9 +136,7 @@ class Generator:
     def relatedpages(self, output_dir: str, nodes: [Node]):
         path = os.path.join(output_dir, 'pages.md')
 
-        data = {
-            'nodes': nodes
-        }
+        data = {'nodes': nodes}
         self._render(self.pages_template, path, data)
 
     def classes(self, output_dir: str, nodes: [Node]):
@@ -167,19 +157,14 @@ class Generator:
             if len(dictionary[letter]) == 0:
                 del dictionary[letter]
 
-        data = {
-            'dictionary': dictionary
-        }
-        self._render(self.classes_template, path, data) 
+        data = {'dictionary': dictionary}
+        self._render(self.classes_template, path, data)
 
     def _find_base_classes(self, nodes: [Node], derived: Node):
         ret = []
         for node in nodes:
             if isinstance(node, str):
-                ret.append({
-                    'refid': node, 
-                    'derived': derived
-                })
+                ret.append({'refid': node, 'derived': derived})
             elif node.kind.is_parent() and not node.kind.is_namespace():
                 bases = node.base_classes
                 if len(bases) == 0:
@@ -191,10 +176,8 @@ class Generator:
     def modules(self, output_dir: str, nodes: [Node]):
         path = os.path.join(output_dir, 'modules.md')
 
-        data = {
-            'nodes': nodes
-        }
-        self._render(self.modules_template, path, data) 
+        data = {'nodes': nodes}
+        self._render(self.modules_template, path, data)
 
     def hierarchy(self, output_dir: str, nodes: [Node]):
         path = os.path.join(output_dir, 'hierarchy.md')
@@ -209,7 +192,7 @@ class Generator:
         for base in bases:
             if not isinstance(base, dict):
                 deduplicated[base.refid] = base
-                
+
         for base in bases:
             if isinstance(base, dict):
                 if base['refid'] not in deduplicated:
@@ -219,11 +202,7 @@ class Generator:
         deduplicated_arr = []
         for key, children in deduplicated.items():
             if isinstance(children, list):
-                deduplicated_arr.append(DummyNode(
-                    key,
-                    list(map(lambda x: x['derived'], children)),
-                    Kind.CLASS
-                ))
+                deduplicated_arr.append(DummyNode(key, list(map(lambda x: x['derived'], children)), Kind.CLASS))
             else:
                 found: Node = None
                 for klass in classes:
@@ -233,10 +212,8 @@ class Generator:
                 if found:
                     deduplicated_arr.append(found)
 
-        data = {
-            'classes': deduplicated_arr
-        }
-        self._render(self.hiearchy_template, path, data) 
+        data = {'classes': deduplicated_arr}
+        self._render(self.hiearchy_template, path, data)
 
     def member(self, output_dir: str, node: Node):
         path = os.path.join(output_dir, node.filename)
@@ -244,7 +221,7 @@ class Generator:
         data = {
             'node': node,
             'member_definition_template': self.member_definition_template,
-            'member_table_template': self.member_table_template
+            'member_table_template': self.member_table_template,
         }
         self._render(self.member_template, path, data)
 
@@ -257,7 +234,7 @@ class Generator:
         data = {
             'node': node,
             'member_definition_template': self.member_definition_template,
-            'member_table_template': self.member_table_template
+            'member_table_template': self.member_table_template,
         }
         self._render(self.member_template, path, data)
 
@@ -320,10 +297,7 @@ class Generator:
 
             sorted_dictionary[letter] = d
 
-        data = {
-            'title': title,
-            'dictionary': sorted_dictionary
-        }
+        data = {'title': title, 'dictionary': sorted_dictionary}
         self._render(self.index_template, path, data)
 
     def _generate_recursive(self, f: TextIO, node: Node, level: int, diff: str):
@@ -344,19 +318,19 @@ class Generator:
         if node.kind.is_group():
             f.write(' ' * level + generate_link(node.title, diff + '/' + node.refid + '.md'))
             for child in node.children:
-                self._generate_recursive_groups(f, child, level + 2, diff)     
+                self._generate_recursive_groups(f, child, level + 2, diff)
 
     def _generate_recursive_pages(self, f: TextIO, node: Node, level: int, diff: str):
         if node.kind.is_page():
             f.write(' ' * level + generate_link(node.title, diff + '/' + node.refid + '.md'))
             for child in node.children:
-                self._generate_recursive_pages(f, child, level + 2, diff)     
+                self._generate_recursive_pages(f, child, level + 2, diff)
 
     def summary(self, output_dir: str, summary_file: str, nodes: [Node], modules: [Node], files: [Node], pages: [Node]):
         print('Modifying', summary_file)
         summaryDir = os.path.dirname(os.path.abspath(summary_file))
         output_path = os.path.abspath(output_dir)
-        diff = output_path[len(summaryDir)+1:].replace('\\', '/')
+        diff = output_path[len(summaryDir) + 1 :].replace('\\', '/')
         link = diff + '/index.md'
 
         content = []
@@ -374,7 +348,7 @@ class Generator:
                     start = m.start()
                     start = i
                 continue
-            
+
             if start is not None and end is None:
                 if not line.startswith(' ' * (offset + 2)):
                     end = i
@@ -388,31 +362,31 @@ class Generator:
 
         with open(summary_file, 'w+') as f:
             # Write first part of the file
-            for i in range(0, start+1):
+            for i in range(0, start + 1):
                 f.write(content[i])
 
-            f.write(' ' * (offset+2) + generate_link('Related Pages', diff + '/' + 'pages.md'))
+            f.write(' ' * (offset + 2) + generate_link('Related Pages', diff + '/' + 'pages.md'))
             for node in pages:
                 self._generate_recursive_pages(f, node, offset + 4, diff)
 
-            f.write(' ' * (offset+2) + generate_link('Modules', diff + '/' + 'modules.md'))
+            f.write(' ' * (offset + 2) + generate_link('Modules', diff + '/' + 'modules.md'))
             for node in modules:
                 self._generate_recursive_groups(f, node, offset + 4, diff)
 
-            f.write(' ' * (offset+2) + generate_link('Class List', diff + '/' + 'annotated.md'))
+            f.write(' ' * (offset + 2) + generate_link('Class List', diff + '/' + 'annotated.md'))
             for node in nodes:
-                self._generate_recursive(f, node, offset + 4, diff)  
+                self._generate_recursive(f, node, offset + 4, diff)
 
             for key, val in ADDITIONAL_FILES.items():
-                f.write(' ' * (offset+2) + generate_link(key, diff + '/' + val))
+                f.write(' ' * (offset + 2) + generate_link(key, diff + '/' + val))
 
-            f.write(' ' * (offset+2) + generate_link('Files', diff + '/' + 'files.md'))
+            f.write(' ' * (offset + 2) + generate_link('Files', diff + '/' + 'files.md'))
             for node in files:
-                self._generate_recursive_files(f, node, offset + 4, diff)    
+                self._generate_recursive_files(f, node, offset + 4, diff)
 
-            f.write(' ' * (offset+2) + generate_link('File Variables', diff + '/' + 'variables.md'))
-            f.write(' ' * (offset+2) + generate_link('File Functions', diff + '/' + 'functions.md'))
-            f.write(' ' * (offset+2) + generate_link('File Macros', diff + '/' + 'macros.md'))
+            f.write(' ' * (offset + 2) + generate_link('File Variables', diff + '/' + 'variables.md'))
+            f.write(' ' * (offset + 2) + generate_link('File Functions', diff + '/' + 'functions.md'))
+            f.write(' ' * (offset + 2) + generate_link('File Macros', diff + '/' + 'macros.md'))
 
             # Write second part of the file
             for i in range(end, len(content)):

@@ -1,0 +1,27 @@
+name: build docs
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+
+jobs:
+  test-build-docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+        with:
+          python-version: 3.x
+      - run: |
+          sudo apt-get update
+          sudo apt-get install -y -q --no-install-recommends doxygen
+      - run: |
+          pip install mkdocs-material
+          pip install mkdocs mkdocs-material
+          pip install -e .
+      - run: |
+          cd example/src
+          doxygen Doxyfile
+          python -m doxybook -i temp/xml -o docs/api -t mkdocs
+          mkdocs gh-deploy --force
