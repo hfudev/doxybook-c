@@ -1,6 +1,7 @@
 import os
 import re
 import string
+from collections import defaultdict
 from typing import TextIO
 
 from jinja2 import StrictUndefined, Template, Undefined
@@ -145,10 +146,7 @@ class Generator:
         classes = self._recursive_find(nodes, Kind.CLASS)
         classes.extend(self._recursive_find(nodes, Kind.STRUCT))
         classes.extend(self._recursive_find(nodes, Kind.INTERFACE))
-        dictionary = {}
-
-        for letter in LETTERS:
-            dictionary[letter] = []
+        dictionary = defaultdict(list)
 
         for klass in classes:
             dictionary[klass.name_short[0].lower()].append(klass)
@@ -334,7 +332,7 @@ class Generator:
         link = diff + '/index.md'
 
         content = []
-        with open(summary_file, 'r') as f:
+        with open(summary_file) as f:
             content = f.readlines()
 
         start = None

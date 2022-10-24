@@ -397,7 +397,7 @@ class Node:
         return self._refid
 
     @property
-    def kind(self) -> str:
+    def kind(self) -> Kind:
         return self._kind
 
     @property
