@@ -70,7 +70,11 @@ def run(
         'Class Member Typedefs',
     )
     generator.index(
-        output, doxygen.root.children, [Kind.ENUM], [Kind.CLASS, Kind.STRUCT, Kind.INTERFACE], 'Class Member Enums'
+        output,
+        doxygen.root.children,
+        [Kind.ENUM],
+        [Kind.CLASS, Kind.STRUCT, Kind.INTERFACE],
+        'Class Member Enums',
     )
     generator.index(
         output,
@@ -79,14 +83,42 @@ def run(
         [Kind.NAMESPACE],
         'Namespace Members',
     )
-    generator.index(output, doxygen.root.children, [Kind.FUNCTION], [Kind.NAMESPACE], 'Namespace Member Functions')
-    generator.index(output, doxygen.root.children, [Kind.VARIABLE], [Kind.NAMESPACE], 'Namespace Member Variables')
-    generator.index(output, doxygen.root.children, [Kind.TYPEDEF], [Kind.NAMESPACE], 'Namespace Member Typedefs')
-    generator.index(output, doxygen.root.children, [Kind.ENUM], [Kind.NAMESPACE], 'Namespace Member Enums')
+    generator.index(
+        output,
+        doxygen.root.children,
+        [Kind.FUNCTION],
+        [Kind.NAMESPACE],
+        'Namespace Member Functions',
+    )
+    generator.index(
+        output,
+        doxygen.root.children,
+        [Kind.VARIABLE],
+        [Kind.NAMESPACE],
+        'Namespace Member Variables',
+    )
+    generator.index(
+        output,
+        doxygen.root.children,
+        [Kind.TYPEDEF],
+        [Kind.NAMESPACE],
+        'Namespace Member Typedefs',
+    )
+    generator.index(
+        output,
+        doxygen.root.children,
+        [Kind.ENUM],
+        [Kind.NAMESPACE],
+        'Namespace Member Enums',
+    )
     generator.index(output, doxygen.files.children, [Kind.FUNCTION], [Kind.FILE], 'Functions')
     generator.index(output, doxygen.files.children, [Kind.DEFINE], [Kind.FILE], 'Macros')
     generator.index(
-        output, doxygen.files.children, [Kind.VARIABLE, Kind.UNION, Kind.TYPEDEF, Kind.ENUM], [Kind.FILE], 'Variables'
+        output,
+        doxygen.files.children,
+        [Kind.VARIABLE, Kind.UNION, Kind.TYPEDEF, Kind.ENUM],
+        [Kind.FILE],
+        'Variables',
     )
 
     if target == 'gitbook' and summary:
