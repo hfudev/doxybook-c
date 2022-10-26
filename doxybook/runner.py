@@ -1,9 +1,13 @@
 import os
+import time
+
+from jinja2 import select_autoescape, Environment, PackageLoader
 
 from doxybook.cache import Cache
 from doxybook.constants import Kind
 from doxybook.doxygen import Doxygen
 from doxybook.generator import Generator
+from doxybook.utils import get_git_revision_hash
 from doxybook.xml_parser import XmlParser
 
 
@@ -30,6 +34,24 @@ def run(
         doxygen.print()
 
     generator = Generator(ignore_errors=ignore_errors, options=options)
+
+    if target == 'single-markdown':
+        env = Environment(loader=PackageLoader('doxybook'), autoescape=select_autoescape())
+        with open(os.path.join(output, 'api.md'), 'w') as fw:
+            template = env.get_template('c/api.jinja')
+            files = doxygen.header_files.children
+            fw.write(
+                template.render(
+                    files=files,
+                    file_template=env.get_template('c/file.jinja'),
+                    table_template=env.get_template('c/table.jinja'),
+                    detail_template=env.get_template('c/detail.jinja'),
+                    commit_sha=get_git_revision_hash(),
+                    asctime=time.asctime(),
+                )
+            )
+        return
+
     generator.annotated(output, doxygen.root.children)
     generator.fileindex(output, doxygen.files.children)
     generator.members(output, doxygen.root.children)

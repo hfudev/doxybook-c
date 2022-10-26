@@ -1,0 +1,21 @@
+{%- if nodes -%}
+## {{title}}
+
+{% for node in nodes -%}
+### <a name="{{ node.anchor }}"></a>{{ node.kind.value }} `{{ node.name }}`
+
+{% if node.codeblock -%}
+```c
+{{ node.codeblock }}
+```
+{%- endif %}
+
+{% set variables = node.query(kinds=['variable']) -%}
+{%- if variables -%}
+Variables:
+{% for var in variables -%}
+- {{var.prefix}} {{var.type}} {{var.name}} {{var.params}} {{var.suffix}}<br>{{var.brief}}
+{% endfor %}
+{%- endif -%}
+{% endfor %}
+{%- endif -%}

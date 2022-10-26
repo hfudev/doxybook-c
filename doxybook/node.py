@@ -393,6 +393,10 @@ class Node:
         return self._kind.is_file()
 
     @property
+    def is_header_file(self) -> bool:
+        return os.path.splitext(self.name)[1] in ['.h', '.hh', '.hpp']
+
+    @property
     def is_dir(self) -> bool:
         return self._kind.is_dir()
 
@@ -438,18 +442,24 @@ class Node:
                 break
         return total
 
+    def url_safe(self, s: str) -> str:
+        if self._options['target'] == 'docsify':
+            return s.replace(' ', '-').replace('=', '').replace('~', '').lower()
+        elif self._options['target'] == 'single-markdown':
+            return s.replace(' ', '-').replace('=', '').replace('~', '').lower()
+        else:
+            return s.replace(' ', '-').replace('_', '-').replace('=', '').replace('~', '').lower()
+
     @property
     def name_url_safe(self) -> str:
-        name = self.name_tokens[-1]
-        if self._options['target'] == 'docsify':
-            name = name.replace(' ', '-').replace('=', '').replace('~', '').lower()
-        else:
-            name = name.replace(' ', '-').replace('_', '-').replace('=', '').replace('~', '').lower()
-        return name
+        return self.url_safe(self.name_tokens[-1])
+
+    @property
+    def location_url_safe(self) -> str:
+        return self.url_safe(self.location)
 
     @property
     def anchor(self) -> str:
-        name = ''
         if self._name.replace(' ', '') in OVERLOAD_OPERATORS:
             num = self.operator_num
             if num > 1:
@@ -466,12 +476,18 @@ class Node:
                 name = self.name_url_safe + '-' + str(self.overload_num) + str(self.overload_total)
             else:
                 name = self.name_url_safe + '-' + str(self.overload_num) + '-' + str(self.overload_total)
+        elif self.is_file:
+            name = self.location_url_safe
         else:
             name = self.name_url_safe
 
         if name.startswith('-'):
             name = name[1:]
         return self._kind.value + '-' + name
+
+    @property
+    def relative_link(self):
+        return '#' + self.anchor
 
     @property
     def url(self) -> str:

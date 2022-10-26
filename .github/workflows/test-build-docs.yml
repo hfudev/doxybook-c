@@ -22,6 +22,6 @@ jobs:
           pip install -e .
       - run: |
           cd example/src
-          doxygen Doxyfile
-          python -m doxybook -i temp/xml -o docs/api -t mkdocs
+          doxygen
+          python -m doxybook -i temp/xml -o docs
           mkdocs gh-deploy --force

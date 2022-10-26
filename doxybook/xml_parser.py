@@ -205,16 +205,20 @@ class XmlParser:
                 refid = item.get('refid')
                 try:
                     ref = self.cache.get(refid)
+                    if self.target == 'single-markdown':
+                        _t = ref.relative_link
+                    else:
+                        _t = ref.url
                     if italic:
                         if item.text:
-                            ret.append(MdLink([MdItalic([MdBold([Text(item.text)])])], ref.url))
+                            ret.append(MdLink([MdItalic([MdBold([Text(item.text)])])], _t))
                         else:
-                            ret.append(MdLink([MdItalic([MdBold([Text(ref.get_full_name())])])], ref.url))
+                            ret.append(MdLink([MdItalic([MdBold([Text(ref.get_full_name())])])], _t))
                     else:
                         if item.text:
-                            ret.append(MdLink([MdBold([Text(item.text)])], ref.url))
+                            ret.append(MdLink([MdBold([Text(item.text)])], _t))
                         else:
-                            ret.append(MdLink([MdBold([Text(ref.get_full_name())])], ref.url))
+                            ret.append(MdLink([MdBold([Text(ref.get_full_name())])], _t))
                 except:
                     if item.text:
                         ret.append(Text(item.text))
