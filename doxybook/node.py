@@ -10,6 +10,9 @@ from doxybook.utils import split_safe
 from doxybook.xml_parser import XmlParser
 
 
+import typing as t
+
+
 class Node:
     def __init__(
         self,
@@ -259,13 +262,26 @@ class Node:
     def has(self, visibility: str, kinds: [str], static: bool) -> bool:
         return len(self.query(visibility, kinds, static)) > 0
 
-    def query(self, visibility: str, kinds: [str], static: bool) -> ['Node']:
+    def query(
+        self, visibility: t.Optional[str] = None, kinds: t.Optional[t.List[str]] = None, static: t.Optional[bool] = None
+    ) -> ['Node']:
         ret = []
-        visibility = Visibility(visibility)
-        kinds = list(map(lambda kind: Kind.from_str(kind), kinds))
         for child in self._children:
-            if child._visibility == visibility and child._kind in kinds and child._static == static:
+            bool_stmts = []
+            if visibility is not None:
+                visibility = Visibility(visibility)
+                bool_stmts.append(child._visibility == visibility)
+
+            if static is not None:
+                bool_stmts.append(child._static == static)
+
+            if kinds is not None:
+                kinds = list(map(lambda kind: Kind.from_str(kind), kinds))
+                bool_stmts.append(child._kind in kinds)
+
+            if bool_stmts == [] or all(bool_stmts):
                 ret.append(child)
+
         return ret
 
     @property
