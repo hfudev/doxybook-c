@@ -17,13 +17,14 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y -q --no-install-recommends doxygen
       - run: |
-          pip install mkdocs-material
-          pip install mkdocs mkdocs-material
-          pip install -e .
+          pip install flit
+          pip install -e ".[doc]"
       - run: |
           cd example/src
           doxygen
-          python -m doxybook -i temp/xml -o docs
+          # use template
+          doxybook-c generate-templates
+          doxybook-c -i temp/xml -o docs --template-dir ./templates
           mkdocs gh-deploy --force
       - uses: actions/upload-artifact@v3
         with:
