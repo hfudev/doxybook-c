@@ -4,7 +4,7 @@ import time
 from jinja2 import select_autoescape, Environment, PackageLoader
 
 from doxybook.cache import Cache
-from doxybook.constants import Kind, PACKAGE_DIR
+from doxybook.constants import Kind
 from doxybook.doxygen import Doxygen
 from doxybook.generator import Generator
 from doxybook.utils import get_git_revision_hash
@@ -39,7 +39,7 @@ def run(
     generator = Generator(ignore_errors=ignore_errors, options=options)
 
     if target == 'single-markdown':
-        template_dir = template_dir or PACKAGE_DIR
+        template_dir = template_dir or 'doxybook'
         template_lang = template_lang or 'c'
 
         env = Environment(loader=PackageLoader(template_dir), autoescape=select_autoescape())

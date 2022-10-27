@@ -1,0 +1,48 @@
+[build-system]
+requires = ["flit_core >=3.2,<4"]
+build-backend = "flit_core.buildapi"
+
+[project]
+name = "doxybook-c"
+authors = [
+    {name = "Fu Hanxi", email = "fuhanxi@espressif.com"},
+    {name = "Matus Novak", email = "matusnov@gmail.com"},
+]
+maintainers = [
+    {name = "Fu Hanxi", email = "fuhanxi@espressif.com"},
+]
+readme = "README.md"
+license = {file = "LICENSE"}
+dynamic = ["version", "description"]
+requires-python = ">=3.7"
+keywords = ['doxygen', 'c', 'markdown']
+dependencies = [
+    "Jinja2",
+]
+classifiers = [
+    "Development Status :: 2 - Pre-Alpha",
+    "License :: OSI Approved :: Apache Software License",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+]
+
+[project.optional-dependencies]
+doc = [
+    "mkdocs",
+    "mkdocs-material",
+]
+
+[project.urls]
+Source = "https://github.com/hfudev/doxygen-c"
+Documentation = "https://hfudev.github.io/doxygen-c"
+
+[project.scripts]
+doxybook-c = "doxybook.__main__:main"
+
+[tool.flit.module]
+name = "doxybook"
+
+[tool.flit.external-data]
+directory = "doxybook/templates"
