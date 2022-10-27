@@ -4,11 +4,13 @@ import time
 from jinja2 import select_autoescape, Environment, PackageLoader
 
 from doxybook.cache import Cache
-from doxybook.constants import Kind
+from doxybook.constants import Kind, PACKAGE_DIR
 from doxybook.doxygen import Doxygen
 from doxybook.generator import Generator
 from doxybook.utils import get_git_revision_hash
 from doxybook.xml_parser import XmlParser
+
+import typing as t
 
 
 def run(
@@ -20,8 +22,9 @@ def run(
     ignore_errors: bool = False,
     summary: str = None,
     link_prefix: str = '',
+    template_dir: t.Optional[str] = None,
+    template_lang: t.Optional[str] = 'c',
 ):
-
     os.makedirs(output, exist_ok=True)
 
     options = {'target': target, 'link_prefix': link_prefix}
@@ -36,16 +39,19 @@ def run(
     generator = Generator(ignore_errors=ignore_errors, options=options)
 
     if target == 'single-markdown':
-        env = Environment(loader=PackageLoader('doxybook'), autoescape=select_autoescape())
+        template_dir = template_dir or PACKAGE_DIR
+        template_lang = template_lang or 'c'
+
+        env = Environment(loader=PackageLoader(template_dir), autoescape=select_autoescape())
         with open(os.path.join(output, 'api.md'), 'w') as fw:
-            template = env.get_template('c/api.jinja')
+            template = env.get_template(f'{template_lang}/api.jinja')
             files = doxygen.header_files.children
             fw.write(
                 template.render(
                     files=files,
-                    file_template=env.get_template('c/file.jinja'),
-                    table_template=env.get_template('c/table.jinja'),
-                    detail_template=env.get_template('c/detail.jinja'),
+                    file_template=env.get_template(f'{template_lang}/file.jinja'),
+                    table_template=env.get_template(f'{template_lang}/table.jinja'),
+                    detail_template=env.get_template(f'{template_lang}/detail.jinja'),
                     commit_sha=get_git_revision_hash(),
                     asctime=time.asctime(),
                 )

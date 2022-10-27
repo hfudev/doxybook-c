@@ -1,3 +1,4 @@
+import os
 from enum import Enum
 
 OVERLOAD_OPERATORS = [
@@ -42,6 +43,9 @@ OVERLOAD_OPERATORS = [
     'operator->',
     'operator->*',
 ]
+
+PACKAGE_DIR = os.path.dirname(__file__)
+DEFAULT_TEMPLATES_DIR = os.path.join(PACKAGE_DIR, 'templates')
 
 
 class Kind(Enum):
