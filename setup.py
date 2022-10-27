@@ -36,7 +36,7 @@ setup(
     install_requires=['Jinja2'],
     entry_points={
         'console_scripts': [
-            'doxybook=doxybook:main',
+            'doxybook=doxybook.__main__:main',
         ],
     },
 )
