@@ -32,11 +32,12 @@ setup(
     author_email='matusnov@gmail.com',
     license='MIT',
     keywords='doxygen gitbook vuepress markdown generator',
-    packages=['doxybook', 'doxybook.templates'],
+    packages=['doxybook', 'doxybook.templates_python'],
     install_requires=['Jinja2'],
     entry_points={
         'console_scripts': [
             'doxybook=doxybook.__main__:main',
         ],
     },
+    include_package_data=True,
 )
