@@ -20,7 +20,7 @@ jobs:
           pip install flit
           pip install -e ".[doc]"
       - run: |
-          cd example/src
+          cd example
           doxygen
           # use template
           doxybook-c generate-templates
@@ -29,5 +29,5 @@ jobs:
       - uses: actions/upload-artifact@v3
         with:
           name: api-reference
-          path: example/src/docs/api.md
+          path: example/docs/api.md
           if-no-files-found: error
