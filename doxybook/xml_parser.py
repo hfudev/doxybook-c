@@ -66,7 +66,7 @@ class XmlParser:
             renderer = MdRenderer()
             for m in self.paras(p, italic=italic):
                 m.render(renderer, '')
-            return renderer.output
+            return renderer.output.strip()
 
     def reference_as_str(self, p: Element) -> str:
         renderer = MdRenderer()
@@ -74,9 +74,9 @@ class XmlParser:
         if refid is not None:
             m = MdLink([MdBold([Text(p.text)])], refid)
             m.render(renderer, '')
-            return renderer.output
+            return renderer.output.strip()
         else:
-            return p.text
+            return p.text.strip()
 
     def programlisting_as_str(self, p: Element) -> str:
         renderer = MdRenderer()
@@ -339,10 +339,10 @@ class XmlParser:
                 ret.append(MdItalic(self.paras(item)))
 
             # End of the item text
-            if item.tail:
+            if item.tail.strip():
                 if italic:
                     ret.append(Text(' '))
                     ret.append(MdItalic([Text(item.tail.strip())]))
                 else:
-                    ret.append(Text(item.tail))
+                    ret.append(Text(item.tail.strip()))
         return ret
