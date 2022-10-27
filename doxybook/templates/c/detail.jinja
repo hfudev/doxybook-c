@@ -13,6 +13,7 @@
 {% set variables = node.query(kinds=['variable']) -%}
 {%- if variables -%}
 Variables:
+
 {% for var in variables -%}
 - {{var.prefix}} {{var.type}} {{var.name}} {{var.params}} {{var.suffix}}<br>{{var.brief}}
 {% endfor %}
