@@ -66,7 +66,7 @@ class XmlParser:
             renderer = MdRenderer()
             for m in self.paras(p, italic=italic):
                 m.render(renderer, '')
-            return renderer.output
+            return renderer.output.strip()
 
     def reference_as_str(self, p: Element) -> str:
         renderer = MdRenderer()
@@ -74,9 +74,9 @@ class XmlParser:
         if refid is not None:
             m = MdLink([MdBold([Text(p.text)])], refid)
             m.render(renderer, '')
-            return renderer.output
+            return renderer.output.strip()
         else:
-            return p.text
+            return p.text.strip()
 
     def programlisting_as_str(self, p: Element) -> str:
         renderer = MdRenderer()
@@ -205,16 +205,20 @@ class XmlParser:
                 refid = item.get('refid')
                 try:
                     ref = self.cache.get(refid)
+                    if self.target == 'single-markdown':
+                        _t = ref.relative_link
+                    else:
+                        _t = ref.url
                     if italic:
                         if item.text:
-                            ret.append(MdLink([MdItalic([MdBold([Text(item.text)])])], ref.url))
+                            ret.append(MdLink([MdItalic([MdBold([Text(item.text)])])], _t))
                         else:
-                            ret.append(MdLink([MdItalic([MdBold([Text(ref.get_full_name())])])], ref.url))
+                            ret.append(MdLink([MdItalic([MdBold([Text(ref.get_full_name())])])], _t))
                     else:
                         if item.text:
-                            ret.append(MdLink([MdBold([Text(item.text)])], ref.url))
+                            ret.append(MdLink([MdBold([Text(item.text)])], _t))
                         else:
-                            ret.append(MdLink([MdBold([Text(ref.get_full_name())])], ref.url))
+                            ret.append(MdLink([MdBold([Text(ref.get_full_name())])], _t))
                 except:
                     if item.text:
                         ret.append(Text(item.text))
@@ -339,10 +343,10 @@ class XmlParser:
                 ret.append(MdItalic(self.paras(item)))
 
             # End of the item text
-            if item.tail:
+            if item.tail.strip():
                 if italic:
                     ret.append(Text(' '))
                     ret.append(MdItalic([Text(item.tail.strip())]))
                 else:
-                    ret.append(Text(item.tail))
+                    ret.append(Text(item.tail.strip()))
         return ret

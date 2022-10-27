@@ -1,6 +1,7 @@
 import os
 import re
 import string
+from collections import defaultdict
 from typing import TextIO
 
 from jinja2 import StrictUndefined, Template, Undefined
@@ -8,19 +9,19 @@ from jinja2.exceptions import TemplateError, TemplateSyntaxError
 
 from doxybook.constants import Kind
 from doxybook.node import DummyNode, Node
-from doxybook.templates.annotated import TEMPLATE as ANNOTATED_TEMPLATE
-from doxybook.templates.classes import TEMPLATE as CLASSES_TEMPLATE
-from doxybook.templates.files import TEMPLATE as FILES_TEMPLATE
-from doxybook.templates.hierarchy import TEMPLATE as HIEARARCHY_TEMPLATE
-from doxybook.templates.index import TEMPLATE as INDEX_TEMPLATE
-from doxybook.templates.member import TEMPLATE as MEMBER_TEMPLATE
-from doxybook.templates.member_definition import TEMPLATE as MEMBER_DEFINITION_TEMPLATE
-from doxybook.templates.member_table import TEMPLATE as MEMBER_TABLE_TEMPLATE
-from doxybook.templates.modules import TEMPLATE as MODULES_TEMPLATE
-from doxybook.templates.namespaces import TEMPLATE as NAMESPACES_TEMPLATE
-from doxybook.templates.page import TEMPLATE as PAGE_TEMPLATE
-from doxybook.templates.pages import TEMPLATE as PAGES_TEMPLATE
-from doxybook.templates.programlisting import TEMPLATE as PROGRAMLISTING_TEMPLATE
+from doxybook.templates_python.annotated import TEMPLATE as ANNOTATED_TEMPLATE
+from doxybook.templates_python.classes import TEMPLATE as CLASSES_TEMPLATE
+from doxybook.templates_python.files import TEMPLATE as FILES_TEMPLATE
+from doxybook.templates_python.hierarchy import TEMPLATE as HIEARARCHY_TEMPLATE
+from doxybook.templates_python.index import TEMPLATE as INDEX_TEMPLATE
+from doxybook.templates_python.member import TEMPLATE as MEMBER_TEMPLATE
+from doxybook.templates_python.member_definition import TEMPLATE as MEMBER_DEFINITION_TEMPLATE
+from doxybook.templates_python.member_table import TEMPLATE as MEMBER_TABLE_TEMPLATE
+from doxybook.templates_python.modules import TEMPLATE as MODULES_TEMPLATE
+from doxybook.templates_python.namespaces import TEMPLATE as NAMESPACES_TEMPLATE
+from doxybook.templates_python.page import TEMPLATE as PAGE_TEMPLATE
+from doxybook.templates_python.pages import TEMPLATE as PAGES_TEMPLATE
+from doxybook.templates_python.programlisting import TEMPLATE as PROGRAMLISTING_TEMPLATE
 
 LETTERS = string.ascii_lowercase + '~_@'
 
@@ -145,10 +146,7 @@ class Generator:
         classes = self._recursive_find(nodes, Kind.CLASS)
         classes.extend(self._recursive_find(nodes, Kind.STRUCT))
         classes.extend(self._recursive_find(nodes, Kind.INTERFACE))
-        dictionary = {}
-
-        for letter in LETTERS:
-            dictionary[letter] = []
+        dictionary = defaultdict(list)
 
         for klass in classes:
             dictionary[klass.name_short[0].lower()].append(klass)
@@ -334,7 +332,7 @@ class Generator:
         link = diff + '/index.md'
 
         content = []
-        with open(summary_file, 'r') as f:
+        with open(summary_file) as f:
             content = f.readlines()
 
         start = None

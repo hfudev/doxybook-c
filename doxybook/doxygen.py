@@ -20,53 +20,29 @@ class Doxygen:
         self.groups = Node('root', None, self.cache, self.parser, None, options=self._options)
         self.files = Node('root', None, self.cache, self.parser, None, options=self._options)
         self.pages = Node('root', None, self.cache, self.parser, None, options=self._options)
+        self.header_files = Node('root', None, self.cache, self.parser, None, options=self._options)
 
         for compound in xml.findall('compound'):
             kind = Kind.from_str(compound.get('kind'))
             refid = compound.get('refid')
+            node = Node(
+                os.path.join(index_path, refid + '.xml'),
+                None,
+                self.cache,
+                self.parser,
+                self.root,
+                options=self._options,
+            )
+            node._visibility = Visibility.PUBLIC
             if kind.is_language():
-                node = Node(
-                    os.path.join(index_path, refid + '.xml'),
-                    None,
-                    self.cache,
-                    self.parser,
-                    self.root,
-                    options=self._options,
-                )
-                node._visibility = Visibility.PUBLIC
                 self.root.add_child(node)
-            if kind == Kind.GROUP:
-                node = Node(
-                    os.path.join(index_path, refid + '.xml'),
-                    None,
-                    self.cache,
-                    self.parser,
-                    self.root,
-                    options=self._options,
-                )
-                node._visibility = Visibility.PUBLIC
+            elif kind == Kind.GROUP:
                 self.groups.add_child(node)
-            if kind == Kind.FILE or kind == Kind.DIR:
-                node = Node(
-                    os.path.join(index_path, refid + '.xml'),
-                    None,
-                    self.cache,
-                    self.parser,
-                    self.root,
-                    options=self._options,
-                )
-                node._visibility = Visibility.PUBLIC
+            elif kind == Kind.FILE or kind == Kind.DIR:
                 self.files.add_child(node)
-            if kind == Kind.PAGE:
-                node = Node(
-                    os.path.join(index_path, refid + '.xml'),
-                    None,
-                    self.cache,
-                    self.parser,
-                    self.root,
-                    options=self._options,
-                )
-                node._visibility = Visibility.PUBLIC
+                if node.is_header_file:
+                    self.header_files.add_child(node)
+            elif kind == Kind.PAGE:
                 self.pages.add_child(node)
 
         print('Deduplicating data... (may take a minute!)')

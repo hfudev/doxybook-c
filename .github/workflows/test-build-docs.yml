@@ -9,8 +9,8 @@ jobs:
   test-build-docs:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-python@v2
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
         with:
           python-version: 3.x
       - run: |
@@ -22,6 +22,11 @@ jobs:
           pip install -e .
       - run: |
           cd example/src
-          doxygen Doxyfile
-          python -m doxybook -i temp/xml -o docs/api -t mkdocs
+          doxygen
+          python -m doxybook -i temp/xml -o docs
           mkdocs gh-deploy --force
+      - uses: actions/upload-artifact@v3
+        with:
+          name: api-reference
+          path: example/src/docs/api.md
+          if-no-files-found: error

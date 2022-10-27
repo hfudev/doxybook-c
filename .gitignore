@@ -114,3 +114,5 @@ temp/
 
 # Temporary Md files
 example/src/docs/api/
+# single file output
+example/src/docs/api.md

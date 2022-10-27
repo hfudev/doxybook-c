@@ -10,6 +10,9 @@ from doxybook.utils import split_safe
 from doxybook.xml_parser import XmlParser
 
 
+import typing as t
+
+
 class Node:
     def __init__(
         self,
@@ -259,13 +262,26 @@ class Node:
     def has(self, visibility: str, kinds: [str], static: bool) -> bool:
         return len(self.query(visibility, kinds, static)) > 0
 
-    def query(self, visibility: str, kinds: [str], static: bool) -> ['Node']:
+    def query(
+        self, visibility: t.Optional[str] = None, kinds: t.Optional[t.List[str]] = None, static: t.Optional[bool] = None
+    ) -> ['Node']:
         ret = []
-        visibility = Visibility(visibility)
-        kinds = list(map(lambda kind: Kind.from_str(kind), kinds))
         for child in self._children:
-            if child._visibility == visibility and child._kind in kinds and child._static == static:
+            bool_stmts = []
+            if visibility is not None:
+                visibility = Visibility(visibility)
+                bool_stmts.append(child._visibility == visibility)
+
+            if static is not None:
+                bool_stmts.append(child._static == static)
+
+            if kinds is not None:
+                kinds = list(map(lambda kind: Kind.from_str(kind), kinds))
+                bool_stmts.append(child._kind in kinds)
+
+            if bool_stmts == [] or all(bool_stmts):
                 ret.append(child)
+
         return ret
 
     @property
@@ -377,6 +393,10 @@ class Node:
         return self._kind.is_file()
 
     @property
+    def is_header_file(self) -> bool:
+        return os.path.splitext(self.name)[1] in ['.h', '.hh', '.hpp']
+
+    @property
     def is_dir(self) -> bool:
         return self._kind.is_dir()
 
@@ -397,7 +417,7 @@ class Node:
         return self._refid
 
     @property
-    def kind(self) -> str:
+    def kind(self) -> Kind:
         return self._kind
 
     @property
@@ -422,18 +442,24 @@ class Node:
                 break
         return total
 
+    def url_safe(self, s: str) -> str:
+        if self._options['target'] == 'docsify':
+            return s.replace(' ', '-').replace('=', '').replace('~', '').lower()
+        elif self._options['target'] == 'single-markdown':
+            return s.replace(' ', '-').replace('=', '').replace('~', '').lower()
+        else:
+            return s.replace(' ', '-').replace('_', '-').replace('=', '').replace('~', '').lower()
+
     @property
     def name_url_safe(self) -> str:
-        name = self.name_tokens[-1]
-        if self._options['target'] == 'docsify':
-            name = name.replace(' ', '-').replace('=', '').replace('~', '').lower()
-        else:
-            name = name.replace(' ', '-').replace('_', '-').replace('=', '').replace('~', '').lower()
-        return name
+        return self.url_safe(self.name_tokens[-1])
+
+    @property
+    def location_url_safe(self) -> str:
+        return self.url_safe(self.location)
 
     @property
     def anchor(self) -> str:
-        name = ''
         if self._name.replace(' ', '') in OVERLOAD_OPERATORS:
             num = self.operator_num
             if num > 1:
@@ -450,12 +476,18 @@ class Node:
                 name = self.name_url_safe + '-' + str(self.overload_num) + str(self.overload_total)
             else:
                 name = self.name_url_safe + '-' + str(self.overload_num) + '-' + str(self.overload_total)
+        elif self.is_file:
+            name = self.location_url_safe
         else:
             name = self.name_url_safe
 
         if name.startswith('-'):
             name = name[1:]
         return self._kind.value + '-' + name
+
+    @property
+    def relative_link(self):
+        return '#' + self.anchor
 
     @property
     def url(self) -> str:

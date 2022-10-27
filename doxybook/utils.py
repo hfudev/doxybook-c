@@ -1,3 +1,6 @@
+import subprocess
+
+
 # Credits: https://stackoverflow.com/a/1630350
 def lookahead(iterable):
     """Pass through all values from the given iterable, augmented by the
@@ -55,3 +58,10 @@ def split_safe(s: str, delim: str) -> [str]:
             last = i
         i += 1
     return tokens
+
+
+def get_git_revision_hash() -> str:
+    try:
+        return subprocess.check_output(['git', 'rev-parse', 'HEAD']).decode('ascii').strip()
+    except subprocess.CalledProcessError:
+        return ''
