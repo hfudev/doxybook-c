@@ -1,7 +1,7 @@
 import os
 import time
 
-from jinja2 import select_autoescape, Environment, PackageLoader
+from jinja2 import select_autoescape, Environment, PackageLoader, FileSystemLoader
 
 from doxybook.cache import Cache
 from doxybook.constants import Kind
@@ -39,10 +39,13 @@ def run(
     generator = Generator(ignore_errors=ignore_errors, options=options)
 
     if target == 'single-markdown':
-        template_dir = template_dir or 'doxybook'
+        if template_dir:
+            loader = FileSystemLoader(template_dir)
+        else:
+            loader = PackageLoader('doxybook')
         template_lang = template_lang or 'c'
 
-        env = Environment(loader=PackageLoader(template_dir), autoescape=select_autoescape())
+        env = Environment(loader=loader, autoescape=select_autoescape())
         with open(os.path.join(output, 'api.md'), 'w') as fw:
             template = env.get_template(f'{template_lang}/api.jinja')
             files = doxygen.header_files.children

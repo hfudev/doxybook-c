@@ -49,8 +49,7 @@ def parse_options():
         '--template-dir',
         help='Would use this template dir instead of the default one if set. '
         'Suggest use "doxygen generate-templates" at first to generate the defaults template dir, '
-        'and then make your own changes on it. '
-        'Please pass the parent folder of your "templates" dir.',
+        'and then make your own changes on it.',
     )
     parser.add_argument(
         '--template-lang',
