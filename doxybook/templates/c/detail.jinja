@@ -2,7 +2,7 @@
 ## {{title}}
 
 {% for node in nodes -%}
-### <a name="{{ node.anchor }}"></a>{{ node.kind.value }} `{{ node.name }}`
+### {{ node.kind.value }} `{{ node.name }}`
 
 {% if node.codeblock -%}
 ```c
