@@ -8,6 +8,9 @@ on:
 jobs:
   test-build-docs:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        lang: [c]
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v4
@@ -20,7 +23,7 @@ jobs:
           pip install flit
           pip install -e ".[doc]"
       - run: |
-          cd example
+          cd example/${{ matrix.lang }}
           doxygen
           # use template
           doxybook-c generate-templates
