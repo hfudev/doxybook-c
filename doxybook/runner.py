@@ -15,7 +15,7 @@ import typing as t
 
 def run(
     output: str,
-    input: str,
+    input_dir: str,
     target: str = 'gitbook',
     hints: bool = True,
     debug: bool = False,
@@ -31,7 +31,7 @@ def run(
 
     cache = Cache()
     parser = XmlParser(cache=cache, target=target, hints=hints)
-    doxygen = Doxygen(input, parser, cache, options=options)
+    doxygen = Doxygen(input_dir, parser, cache, options=options)
 
     if debug:
         doxygen.print()

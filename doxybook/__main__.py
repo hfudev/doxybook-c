@@ -90,7 +90,7 @@ def main():
 
     os.makedirs(args.output, exist_ok=True)
     run(
-        input=args.input,
+        input_dir=args.input,
         output=args.output,
         target=args.target,
         hints=args.hints,
