@@ -1,0 +1,7 @@
+site_name: Test Project
+theme:
+  name: material
+docs_dir: 'example'
+nav:
+  - c api: c/docs/api.md
+  - cpp api: cpp/docs/api.md
