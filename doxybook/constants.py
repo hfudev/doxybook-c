@@ -164,3 +164,6 @@ class Visibility(Enum):
     PUBLIC = 'public'
     PROTECTED = 'protected'
     PRIVATE = 'private'
+
+
+SUPPORTED_LANGS = ['c', 'cpp']
