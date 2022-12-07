@@ -25,7 +25,12 @@ def run(
     template_dir: t.Optional[str] = None,
     template_lang: t.Optional[str] = 'c',
 ):
-    os.makedirs(output, exist_ok=True)
+    if output.endswith('.md'):
+        os.makedirs(os.path.dirname(output), exist_ok=True)
+        output_filepath = output
+    else:
+        os.makedirs(output, exist_ok=True)
+        output_filepath = os.path.join(output, 'api.md')
 
     options = {'target': target, 'link_prefix': link_prefix}
 
@@ -46,7 +51,7 @@ def run(
         template_lang = template_lang or 'c'
 
         env = Environment(loader=loader, autoescape=select_autoescape())
-        with open(os.path.join(output, 'api.md'), 'w') as fw:
+        with open(output_filepath, 'w') as fw:
             template = env.get_template('api.jinja')
             files = doxygen.header_files.children
             common_args = {

@@ -26,13 +26,13 @@ jobs:
         run: |
           pushd example/c
           doxygen
-          doxybook-c -i temp/xml -o docs --template-dir ../../templates --template-lang c
+          doxybook-c -i temp/xml -o ../../docs/c_api.md --template-dir ../../templates --template-lang c
           popd
       - name: generate cpp api
         run: |
           pushd example/cpp
           doxygen
-          doxybook-c -i temp/xml -o docs --template-dir ../../templates --template-lang cpp
+          doxybook-c -i temp/xml -o ../../docs/cpp_api.md --template-dir ../../templates --template-lang cpp
           popd
       - name: deploy mkdocs
         run: |
@@ -40,7 +40,5 @@ jobs:
       - uses: actions/upload-artifact@v3
         with:
           name: api-reference
-          path: |
-            example/c/docs/api.md
-            example/cpp/docs/api.md
+          path: docs
           if-no-files-found: error

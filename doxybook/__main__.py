@@ -88,7 +88,6 @@ def main():
     if args.target == 'gitbook' and args.summary and not os.path.exists(args.summary):
         raise Exception('The provided summary file does not exist!')
 
-    os.makedirs(args.output, exist_ok=True)
     run(
         input_dir=args.input,
         output=args.output,
