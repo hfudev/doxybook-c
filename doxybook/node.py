@@ -452,7 +452,7 @@ class Node:
 
     @property
     def name_url_safe(self) -> str:
-        return self.url_safe(self.name_tokens[-1])
+        return self.url_safe(''.join(self.name_tokens))
 
     @property
     def location_url_safe(self) -> str:

@@ -47,18 +47,17 @@ def run(
 
         env = Environment(loader=loader, autoescape=select_autoescape())
         with open(os.path.join(output, 'api.md'), 'w') as fw:
-            template = env.get_template(f'{template_lang}/api.jinja')
+            template = env.get_template('api.jinja')
             files = doxygen.header_files.children
-            fw.write(
-                template.render(
-                    files=files,
-                    file_template=env.get_template(f'{template_lang}/file.jinja'),
-                    table_template=env.get_template(f'{template_lang}/table.jinja'),
-                    detail_template=env.get_template(f'{template_lang}/detail.jinja'),
-                    commit_sha=get_git_revision_hash(),
-                    asctime=time.asctime(),
-                )
-            )
+            common_args = {
+                'files': files,
+                'file_template': env.get_template(f'{template_lang}/file.jinja'),
+                'table_template': env.get_template('table.jinja'),
+                'detail_template': env.get_template('detail.jinja'),
+                'commit_sha': get_git_revision_hash(),
+                'asctime': time.asctime(),
+            }
+            fw.write(template.render(**common_args))
         return
 
     generator.annotated(output, doxygen.root.children)
