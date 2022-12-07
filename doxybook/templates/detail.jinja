@@ -8,9 +8,10 @@
 ```c
 {{ node.codeblock }}
 ```
-{%- endif %}
 
-{% set variables = node.query(kinds=['variable']) -%}
+{% endif -%}
+
+{%- set variables = node.query(kinds=['variable']) -%}
 {%- if variables -%}
 Variables:
 

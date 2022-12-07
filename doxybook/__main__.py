@@ -2,7 +2,7 @@ import argparse
 import os
 from shutil import copytree
 
-from doxybook.constants import DEFAULT_TEMPLATES_DIR
+from doxybook.constants import DEFAULT_TEMPLATES_DIR, SUPPORTED_LANGS
 from doxybook.runner import run
 
 
@@ -53,9 +53,9 @@ def parse_options():
     )
     parser.add_argument(
         '--template-lang',
-        choices=['c'],
+        choices=SUPPORTED_LANGS,
         default='c',
-        help='specifies your project\'s main language. for now we only support c.',
+        help='specifies your project\'s main language.',
     )
     action = parser.add_subparsers(dest='action')
     generate_templates = action.add_parser('generate-templates')
@@ -88,9 +88,8 @@ def main():
     if args.target == 'gitbook' and args.summary and not os.path.exists(args.summary):
         raise Exception('The provided summary file does not exist!')
 
-    os.makedirs(args.output, exist_ok=True)
     run(
-        input=args.input,
+        input_dir=args.input,
         output=args.output,
         target=args.target,
         hints=args.hints,

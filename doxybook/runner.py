@@ -15,7 +15,7 @@ import typing as t
 
 def run(
     output: str,
-    input: str,
+    input_dir: str,
     target: str = 'gitbook',
     hints: bool = True,
     debug: bool = False,
@@ -25,13 +25,18 @@ def run(
     template_dir: t.Optional[str] = None,
     template_lang: t.Optional[str] = 'c',
 ):
-    os.makedirs(output, exist_ok=True)
+    if output.endswith('.md'):
+        os.makedirs(os.path.dirname(output), exist_ok=True)
+        output_filepath = output
+    else:
+        os.makedirs(output, exist_ok=True)
+        output_filepath = os.path.join(output, 'api.md')
 
     options = {'target': target, 'link_prefix': link_prefix}
 
     cache = Cache()
     parser = XmlParser(cache=cache, target=target, hints=hints)
-    doxygen = Doxygen(input, parser, cache, options=options)
+    doxygen = Doxygen(input_dir, parser, cache, options=options)
 
     if debug:
         doxygen.print()
@@ -46,19 +51,18 @@ def run(
         template_lang = template_lang or 'c'
 
         env = Environment(loader=loader, autoescape=select_autoescape())
-        with open(os.path.join(output, 'api.md'), 'w') as fw:
-            template = env.get_template(f'{template_lang}/api.jinja')
+        with open(output_filepath, 'w') as fw:
+            template = env.get_template('api.jinja')
             files = doxygen.header_files.children
-            fw.write(
-                template.render(
-                    files=files,
-                    file_template=env.get_template(f'{template_lang}/file.jinja'),
-                    table_template=env.get_template(f'{template_lang}/table.jinja'),
-                    detail_template=env.get_template(f'{template_lang}/detail.jinja'),
-                    commit_sha=get_git_revision_hash(),
-                    asctime=time.asctime(),
-                )
-            )
+            common_args = {
+                'files': files,
+                'file_template': env.get_template(f'{template_lang}/file.jinja'),
+                'table_template': env.get_template('table.jinja'),
+                'detail_template': env.get_template('detail.jinja'),
+                'commit_sha': get_git_revision_hash(),
+                'asctime': time.asctime(),
+            }
+            fw.write(template.render(**common_args))
         return
 
     generator.annotated(output, doxygen.root.children)
