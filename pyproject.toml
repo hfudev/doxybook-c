@@ -15,7 +15,7 @@ readme = "README.md"
 license = {file = "LICENSE"}
 dynamic = ["version", "description"]
 requires-python = ">=3.7"
-keywords = ['doxygen', 'c', 'markdown']
+keywords = ['doxygen', 'c', 'cpp', 'markdown']
 dependencies = [
     "Jinja2",
 ]
