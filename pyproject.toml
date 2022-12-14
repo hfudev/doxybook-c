@@ -43,6 +43,3 @@ doxybook-c = "doxybook.__main__:main"
 
 [tool.flit.module]
 name = "doxybook"
-
-[tool.flit.external-data]
-directory = "doxybook/templates"
