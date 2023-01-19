@@ -101,6 +101,7 @@ def main():
 
     doxygen_cmd = [doxygen_bin]
     doxygen_cmd.extend(shlex.split(args.doxygen_extra_args))
+    print(f"Running {' '.join(doxygen_cmd)}")
     subprocess.run(doxygen_cmd, stderr=sys.stderr, stdout=sys.stdout, check=True)
 
     if args.input is None or args.output is None:
