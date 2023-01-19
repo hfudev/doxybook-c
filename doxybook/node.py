@@ -455,6 +455,10 @@ class Node:
         return self.url_safe(''.join(self.name_tokens))
 
     @property
+    def location_url_safe(self) -> str:
+        return self.url_safe(self.location)
+
+    @property
     def anchor(self) -> str:
         if self._name.replace(' ', '') in OVERLOAD_OPERATORS:
             num = self.operator_num
@@ -472,6 +476,8 @@ class Node:
                 name = self.name_url_safe + '-' + str(self.overload_num) + str(self.overload_total)
             else:
                 name = self.name_url_safe + '-' + str(self.overload_num) + '-' + str(self.overload_total)
+        elif self.is_file:
+            name = self.location_url_safe
         else:
             name = self.name_url_safe
 
