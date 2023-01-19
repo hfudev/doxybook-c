@@ -446,7 +446,15 @@ class Node:
         if self._options['target'] == 'docsify':
             return s.replace(' ', '-').replace('=', '').replace('~', '').lower()
         elif self._options['target'] == 'single-markdown':
-            return s.replace(' ', '-').replace('=', '').replace('~', '').lower()
+            return (
+                s.replace(' ', '-')
+                .replace('=', '')
+                .replace('~', '')
+                .replace('/', '')
+                .replace('~', '')
+                .replace('.', '')
+                .lower()
+            )
         else:
             return s.replace(' ', '-').replace('_', '-').replace('=', '').replace('~', '').lower()
 
