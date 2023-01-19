@@ -1,5 +1,9 @@
 import argparse
 import os
+import shlex
+import shutil
+import subprocess
+import sys
 from shutil import copytree
 
 from doxybook.constants import DEFAULT_TEMPLATES_DIR, SUPPORTED_LANGS
@@ -57,6 +61,15 @@ def parse_options():
         default='c',
         help='specifies your project\'s main language.',
     )
+    parser.add_argument(
+        '--doxygen-bin',
+        default='doxygen',
+        help='doxygen binary path',
+    )
+    parser.add_argument(
+        '--doxygen-extra-args', default='', help='extra argument passed into doxygen. should be doublequoted'
+    )
+
     action = parser.add_subparsers(dest='action')
     generate_templates = action.add_parser('generate-templates')
     generate_templates.add_argument(
@@ -81,6 +94,14 @@ def main():
         copytree(DEFAULT_TEMPLATES_DIR, output_dir)
         print(f'Copied the default template files to {output_dir}')
         return
+
+    doxygen_bin = shutil.which(args.doxygen_bin)
+    if not doxygen_bin:
+        raise RuntimeError(f'{args.doxygen_bin} not found in your PATH')
+
+    doxygen_cmd = [doxygen_bin]
+    doxygen_cmd.extend(shlex.split(args.doxygen_extra_args))
+    subprocess.run(doxygen_cmd, stderr=sys.stderr, stdout=sys.stdout)
 
     if args.input is None or args.output is None:
         raise ValueError('-i/--input and -o/--output are required')

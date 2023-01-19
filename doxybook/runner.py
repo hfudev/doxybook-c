@@ -63,6 +63,8 @@ def run(
                 'asctime': time.asctime(),
             }
             fw.write(template.render(**common_args))
+
+        print(f'Generated single-markdown API reference: {output_filepath}')
         return
 
     generator.annotated(output, doxygen.root.children)
