@@ -24,7 +24,10 @@
 Variables:
 
 {% for var in variables -%}
-- {{var.prefix}} {{var.type}} {{var.name}} {{var.params}} {{var.suffix}}<br>{{var.brief}}
+- {{var.prefix}} {{var.type}} {{var.name}} {{var.params}} {{var.suffix}}
+  {%- if var.brief %}<br>{{var.brief}}{% endif -%}
+  {%- if var.details %}<br>{{var.details}}{% endif %}
+
 {% endfor %}
 {%- endif -%}
 {% endfor %}
