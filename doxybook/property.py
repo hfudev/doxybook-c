@@ -51,8 +51,8 @@ class Property:
             return self.md(plain=True)
 
         def has(self) -> bool:
-            detaileddescription = self.xml.find('detaileddescription')
-            return len(list(detaileddescription)) > 0
+            briefdescription = self.xml.find('briefdescription')
+            return len(list(briefdescription)) > 0
 
     class Includes:
         def __init__(self, xml: Element, parser: XmlParser, kind: Kind):
