@@ -19,6 +19,35 @@ Needs up to 100MiB of memory. Parsing super large projects can use up to 0.5GiB 
 
 **Install using Python Pip: <https://pypi.org/project/esp-doxybook/>**
 
+## Use with [pre-commit](https://pre-commit.com/)
+
+```yaml
+- repo: https://github.com/espressif/doxybook
+  rev: v0.1.0
+  hooks:
+    - id: doxygen-api-md
+```
+
+The default path of the generated xml files is `xml`, make sure it's matching the path in your Doxyfile.
+
+For example, if you have this in your Doxyfile:
+
+```
+OUTPUT_DIRECTORY       = ./doxygen_output
+```
+
+Then you need to set the path in the pre-commit config like this:
+
+```yaml
+- repo: https://github.com/espressif/doxybook
+  rev: v0.1.0
+  hooks:
+    - id: doxygen-api-md
+      args: ["-i", "doxygen_output/xml", "-o", "docs/api.md"]
+```
+
+Make sure you've installed `doxygen` before you run `pre-commit install`. Otherwise, the hook will fail.
+
 ## Compile the example
 
 ```bash
