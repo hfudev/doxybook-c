@@ -11,33 +11,25 @@ repos:
     rev: v4.4.0
     hooks:
       - id: trailing-whitespace
-        exclude: &whitespace_excludes |
-          (?x)^(
-            .+\.(md|rst|map|bin)|
-            .+test.*\/.*expected.*|
-          )$
       - id: end-of-file-fixer
-        exclude: *whitespace_excludes
       - id: mixed-line-ending
         args: [ '-f=lf' ]
       - id: double-quote-string-fixer
-  - repo: https://github.com/ikamensh/flynt/
-    rev: '0.77'
+  - repo: https://github.com/asottile/pyupgrade
+    rev: v3.10.1
     hooks:
-      - id: flynt
+      - id: pyupgrade
+        args: [--py37-plus]
+  - repo: https://github.com/pycqa/isort
+    rev: 5.12.0
+    hooks:
+      - id: isort
   - repo: https://github.com/psf/black
-    rev: 22.12.0
+    rev: 23.7.0
     hooks:
       - id: black
-        args: [ '--skip-string-normalization', '-l', '120' ]
-  - repo: https://github.com/pycqa/flake8
-    rev: 6.0.0
+  - repo: https://github.com/charliermarsh/ruff-pre-commit
+    rev: 'v0.0.284'
     hooks:
-      - id: flake8
-        # E1/W1 Indentation
-        # E2/W2 Whitespace
-        # E3/W3 Blank line
-        # E4/W4 Import
-        # E5/W5 Line Length
-        # E722 do not use bare 'except' (temporary workaround)
-        args: ['--ignore', 'E1,W1,E2,W2,E3,W3,E4,W4,E5,W5,E722']
+      - id: ruff
+        args: ['--fix']

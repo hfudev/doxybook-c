@@ -21,20 +21,19 @@ jobs:
           pip install -e ".[doc]"
       - name: generate templates
         run: |
-          doxybook-c generate-templates
+          esp-doxybook generate-templates
       - name: generate c api
         run: |
           pushd example/c
-          doxygen
-          doxybook-c -i temp/xml -o ../../docs/c_api.md --template-dir ../../templates --template-lang c
+          esp-doxybook -i temp/xml -o ../../docs/c_api.md --template-dir ../../templates --template-lang c
           popd
       - name: generate cpp api
         run: |
           pushd example/cpp
-          doxygen
-          doxybook-c -i temp/xml -o ../../docs/cpp_api.md --template-dir ../../templates --template-lang cpp
+          esp-doxybook -i temp/xml -o ../../docs/cpp_api.md --template-dir ../../templates --template-lang cpp
           popd
       - name: deploy mkdocs
+        if: github.ref == 'refs/heads/master'
         run: |
           mkdocs gh-deploy --force
       - uses: actions/upload-artifact@v3
