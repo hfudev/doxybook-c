@@ -33,6 +33,7 @@ jobs:
           esp-doxybook -i temp/xml -o ../../docs/cpp_api.md --template-dir ../../templates --template-lang cpp
           popd
       - name: deploy mkdocs
+        if: github.ref == 'refs/heads/master'
         run: |
           mkdocs gh-deploy --force
       - uses: actions/upload-artifact@v3
