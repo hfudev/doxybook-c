@@ -1,6 +1,6 @@
 # esp-doxybook
 
-This is a tool that converts Doxygen XML output into a single-file API reference in MarkDown format.
+This is a tool that converts Doxygen XML output into a single-file API reference in Markdown format.
 
 ## Live Demo
 
