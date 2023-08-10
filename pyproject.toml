@@ -43,3 +43,20 @@ doxybook-c = "doxybook.__main__:main"
 
 [tool.flit.module]
 name = "doxybook"
+
+[tool.isort]
+profile = 'black'
+force_grid_wrap = 1
+
+[tool.black]
+line-length = 120
+skip-string-normalization = true
+
+[tool.ruff]
+select = [
+    'F',  # Pyflakes
+    'E',  # pycodestyle
+    'W',  # pycodestyle
+]
+line-length = 120
+target-version = "py37"
