@@ -1,4 +1,4 @@
 """
-Convert Doxygen XML to a single markdown file for C/C++'
+Convert Doxygen XML output into a single-file API reference in Markdown format.
 """
 __version__ = '0.1.0'
