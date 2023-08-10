@@ -3,10 +3,9 @@ requires = ["flit_core >=3.2,<4"]
 build-backend = "flit_core.buildapi"
 
 [project]
-name = "doxybook-c"
+name = "esp-doxybook"
 authors = [
     {name = "Fu Hanxi", email = "fuhanxi@espressif.com"},
-    {name = "Matus Novak", email = "matusnov@gmail.com"},
 ]
 maintainers = [
     {name = "Fu Hanxi", email = "fuhanxi@espressif.com"},
@@ -26,6 +25,7 @@ classifiers = [
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
 ]
 
 [project.optional-dependencies]
@@ -35,11 +35,10 @@ doc = [
 ]
 
 [project.urls]
-Source = "https://github.com/hfudev/doxygen-c"
-Documentation = "https://hfudev.github.io/doxygen-c"
+Source = "https://github.com/espressif/doxybook"
 
 [project.scripts]
-doxybook-c = "doxybook.__main__:main"
+esp-doxybook = "doxybook.__main__:main"
 
 [tool.flit.module]
 name = "doxybook"
