@@ -59,3 +59,12 @@ select = [
 ]
 line-length = 120
 target-version = "py37"
+
+[tool.commitizen]
+name = "cz_conventional_commits"
+tag_format = "v$version"
+version = "0.1.0"
+update_changelog_on_bump = true
+version_files = [
+    "doxybook/__init__.py",
+]
