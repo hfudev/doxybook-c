@@ -1,5 +1,9 @@
 ## File {{ file.location }}
 
+{{ file.brief }}
+
+{{ file.details }}
+
 {% set namespaces = file.query(kinds=['namespace']) -%}
 {%- set classes = file.query(kinds=['struct', 'class', 'interface']) -%}
 {%- set macros = file.query(kinds=['define']) -%}
