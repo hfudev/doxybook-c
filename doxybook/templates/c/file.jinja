@@ -1,5 +1,9 @@
 ## File {{ file.location }}
 
+{{ file.brief }}
+
+{{ file.details }}
+
 {% set macros = file.query(kinds=['define']) -%}
 {%- set structures_types = file.query(kinds=['struct', 'typedef', 'enum', 'union']) -%}
 {%- set functions = file.query(kinds=['function']) -%}
