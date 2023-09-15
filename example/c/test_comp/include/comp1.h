@@ -1,3 +1,11 @@
+/**
+ * @file comp1.h
+ * @brief This is a test file for comp1
+ *
+ * To use this driver:
+ * - include this file in your project
+ * - @ref print() is a function that prints "Hello World!"
+ */
 
 /**
  * @brief print function
