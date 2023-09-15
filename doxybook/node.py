@@ -1,34 +1,48 @@
 import os
-from xml.etree import ElementTree
+import typing as t
+from xml.etree import (
+    ElementTree,
+)
 from xml.etree.ElementTree import Element as Element
 
-from doxybook.cache import Cache
-from doxybook.constants import OVERLOAD_OPERATORS, Kind, Visibility
-from doxybook.markdown import escape
-from doxybook.property import Property
-from doxybook.utils import split_safe
-from doxybook.xml_parser import XmlParser
-
-
-import typing as t
+from doxybook.cache import (
+    Cache,
+)
+from doxybook.constants import (
+    OVERLOAD_OPERATORS,
+    Kind,
+    Visibility,
+)
+from doxybook.markdown import (
+    escape,
+)
+from doxybook.property import (
+    Property,
+)
+from doxybook.utils import (
+    split_safe,
+)
+from doxybook.xml_parser import (
+    XmlParser,
+)
 
 
 class Node:
     def __init__(
         self,
         xml_file: str,
-        xml: Element,
+        xml: t.Optional[Element],
         cache: Cache,
         parser: XmlParser,
         parent: 'Node',
         refid: str = None,
-        options: dict = {},
+        options: t.Optional[dict] = None,
     ):
         self._children: ['Node'] = []
         self._cache: Cache = cache
         self._parser: XmlParser = parser
         self._parent = parent
-        self._options = options
+        self._options = options or {}
 
         if xml_file == 'root':
             self._refid = 'root'
@@ -97,7 +111,7 @@ class Node:
                     child = self._cache.get(refid)
                     self.add_child(child)
                     continue
-                except:
+                except Exception:
                     pass
             child = Node(
                 os.path.join(self._dirname, refid + '.xml'),
@@ -121,7 +135,7 @@ class Node:
                     child = self._cache.get(refid)
                     self.add_child(child)
                     continue
-                except:
+                except Exception:
                     pass
 
             try:
@@ -154,7 +168,7 @@ class Node:
                     child = self._cache.get(refid)
                     self.add_child(child)
                     continue
-                except:
+                except Exception:
                     pass
 
             child = Node(
@@ -175,7 +189,7 @@ class Node:
                     child = self._cache.get(refid)
                     self.add_child(child)
                     continue
-                except:
+                except Exception:
                     pass
 
             child = Node(
@@ -197,7 +211,7 @@ class Node:
                     child = self._cache.get(refid)
                     self.add_child(child)
                     continue
-                except:
+                except Exception:
                     pass
 
             child = Node(
@@ -221,7 +235,7 @@ class Node:
                             child = self._cache.get(refid)
                             self.add_child(child)
                             continue
-                        except:
+                        except Exception:
                             pass
                     child = Node(None, memberdef, self._cache, self._parser, self, options=self._options)
                     self.add_child(child)
