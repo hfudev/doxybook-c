@@ -51,7 +51,7 @@ class Property:
                 text = []
                 for para in paras:
                     text.append(self.parser.paras_as_str(para, italic=True, plain=plain))
-                return ' '.join(text)
+                return ''.join(text)
             else:
                 return ''
 
@@ -146,17 +146,20 @@ class Property:
         def array(self, plain: bool = False) -> [str]:
             ret = []
             for param in self.xml.findall('param'):
-                p = ''
                 type = param.find('type')
                 p = self.parser.paras_as_str(type, plain=plain)
 
                 declname = param.find('declname')
                 if declname is not None:
-                    p += ' ' + self.parser.paras_as_str(declname, plain=plain)
+                    if not p.endswith('*'):  # not pointers
+                        p += ' '
+                    p += self.parser.paras_as_str(declname, plain=plain)
                 else:
                     defname = param.find('defname')
                     if defname is not None:
-                        p += ' ' + self.parser.paras_as_str(defname, plain=plain)
+                        if not p.endswith('*'):  # not pointers
+                            p += ' '
+                        p += self.parser.paras_as_str(defname, plain=plain)
 
                 defval = param.find('defval')
                 if defval is not None:
