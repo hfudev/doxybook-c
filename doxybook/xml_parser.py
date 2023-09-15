@@ -1,6 +1,8 @@
 from xml.etree.ElementTree import Element as Element
 
-from doxybook.cache import Cache
+from doxybook.cache import (
+    Cache,
+)
 from doxybook.markdown import (
     Br,
     Code,
@@ -9,7 +11,6 @@ from doxybook.markdown import (
     MdBold,
     MdCodeBlock,
     MdHeader,
-    MdHint,
     MdImage,
     MdItalic,
     MdLink,
@@ -21,7 +22,9 @@ from doxybook.markdown import (
     MdTableRow,
     Text,
 )
-from doxybook.utils import lookahead
+from doxybook.utils import (
+    lookahead,
+)
 
 SIMPLE_SECTIONS = {
     'see': 'See also:',
@@ -47,14 +50,11 @@ SIMPLE_SECTIONS = {
     'date': 'Date:',
 }
 
-SIMPLE_SECTIONS_HINTS_VUEPRESS = {'note': 'tip', 'bug': 'danger', 'warning': 'warning'}
-
 
 class XmlParser:
-    def __init__(self, cache: Cache, target: str = 'gitbook', hints: bool = True):
+    def __init__(self, cache: Cache, target: str = 'gitbook'):
         self.target = target
         self.cache = cache
-        self.hints = hints
 
     def anchor(self, name: str) -> str:
         return '<a name=\"' + name + '\"></a>'
@@ -205,21 +205,17 @@ class XmlParser:
                 refid = item.get('refid')
                 try:
                     ref = self.cache.get(refid)
-                    if self.target == 'single-markdown':
-                        _t = ref.relative_link
-                    else:
-                        _t = ref.url
                     if italic:
                         if item.text:
-                            ret.append(MdLink([MdItalic([MdBold([Text(item.text)])])], _t))
+                            ret.append(MdLink([MdItalic([MdBold([Text(item.text)])])], ref.relative_link))
                         else:
-                            ret.append(MdLink([MdItalic([MdBold([Text(ref.get_full_name())])])], _t))
+                            ret.append(MdLink([MdItalic([MdBold([Text(ref.get_full_name())])])], ref.relative_link))
                     else:
                         if item.text:
-                            ret.append(MdLink([MdBold([Text(item.text)])], _t))
+                            ret.append(MdLink([MdBold([Text(item.text)])], ref.relative_link))
                         else:
-                            ret.append(MdLink([MdBold([Text(ref.get_full_name())])], _t))
-                except:
+                            ret.append(MdLink([MdBold([Text(ref.get_full_name())])], ref.relative_link))
+                except Exception:
                     if item.text:
                         ret.append(Text(item.text))
 
@@ -287,48 +283,31 @@ class XmlParser:
             # simplesect
             elif item.tag == 'simplesect':
                 kind = item.get('kind')
-                if self.hints and self.target == 'vuepress' and kind in SIMPLE_SECTIONS_HINTS_VUEPRESS:
+                ret.append(Br())
+                ret.append(MdBold([Text(SIMPLE_SECTIONS[kind])]))
+                if kind != 'see':
                     ret.append(Br())
-                    children = []
-                    for sp in item.findall('para'):
-                        children.extend(self.paras(sp))
-                        children.append(Br())
-                    ret.append(MdHint(children, SIMPLE_SECTIONS_HINTS_VUEPRESS[kind], SIMPLE_SECTIONS[kind]))
-
                 else:
-                    ret.append(Br())
-                    ret.append(MdBold([Text(SIMPLE_SECTIONS[kind])]))
-                    if kind != 'see':
-                        ret.append(Br())
-                    else:
-                        ret.append(Text(' '))
+                    ret.append(Text(' '))
 
-                    for sp, has_more in lookahead(item.findall('para')):
-                        ret.extend(self.paras(sp))
-                        if kind == 'see':
-                            if has_more:
-                                ret.append(Text(', '))
-                        else:
-                            ret.append(Br())
+                for sp, has_more in lookahead(item.findall('para')):
+                    ret.extend(self.paras(sp))
+                    if kind == 'see':
+                        if has_more:
+                            ret.append(Text(', '))
+                    else:
+                        ret.append(Br())
 
             # xrefsect
             elif item.tag == 'xrefsect':
                 xreftitle = item.find('xreftitle')
                 xrefdescription = item.find('xrefdescription')
-                kind = xreftitle.text.lower()
-                if self.hints and self.target == 'vuepress' and kind in SIMPLE_SECTIONS_HINTS_VUEPRESS:
-                    children = []
-                    for sp in xrefdescription.findall('para'):
-                        children.extend(self.paras(sp))
-                        children.append(Br())
-                    ret.append(MdHint(children, SIMPLE_SECTIONS_HINTS_VUEPRESS[kind], SIMPLE_SECTIONS[kind]))
-                else:
+                ret.append(Br())
+                ret.append(MdBold(self.paras(xreftitle)))
+                ret.append(Br())
+                for sp in xrefdescription.findall('para'):
+                    ret.extend(self.paras(sp))
                     ret.append(Br())
-                    ret.append(MdBold(self.paras(xreftitle)))
-                    ret.append(Br())
-                    for sp in xrefdescription.findall('para'):
-                        ret.extend(self.paras(sp))
-                        ret.append(Br())
 
             # Hard link
             elif item.tag == 'ulink':

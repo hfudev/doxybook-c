@@ -1,10 +1,21 @@
 import os
-from xml.etree import ElementTree
+from xml.etree import (
+    ElementTree,
+)
 
-from doxybook.cache import Cache
-from doxybook.constants import Kind, Visibility
-from doxybook.node import Node
-from doxybook.xml_parser import XmlParser
+from doxybook.cache import (
+    Cache,
+)
+from doxybook.constants import (
+    Kind,
+    Visibility,
+)
+from doxybook.node import (
+    Node,
+)
+from doxybook.xml_parser import (
+    XmlParser,
+)
 
 
 class Doxygen:

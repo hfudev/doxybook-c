@@ -1,5 +1,7 @@
 import os
-from enum import Enum
+from enum import (
+    Enum,
+)
 
 OVERLOAD_OPERATORS = [
     'operator=',
@@ -156,7 +158,7 @@ class Kind(Enum):
     def from_str(s: str) -> 'Kind':
         try:
             return Kind(s)
-        except:
+        except Exception:
             return Kind.NONE
 
 

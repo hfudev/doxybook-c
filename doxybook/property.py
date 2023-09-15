@@ -1,9 +1,15 @@
 import re
 from xml.etree.ElementTree import Element as Element
 
-from doxybook.constants import Kind
-from doxybook.markdown import escape
-from doxybook.xml_parser import XmlParser
+from doxybook.constants import (
+    Kind,
+)
+from doxybook.markdown import (
+    escape,
+)
+from doxybook.xml_parser import (
+    XmlParser,
+)
 
 
 class Property:

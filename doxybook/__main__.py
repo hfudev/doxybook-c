@@ -4,10 +4,17 @@ import shlex
 import shutil
 import subprocess
 import sys
-from shutil import copytree
+from shutil import (
+    copytree,
+)
 
-from doxybook.constants import DEFAULT_TEMPLATES_DIR, SUPPORTED_LANGS
-from doxybook.runner import run
+from doxybook.constants import (
+    DEFAULT_TEMPLATES_DIR,
+    SUPPORTED_LANGS,
+)
+from doxybook.runner import (
+    run,
+)
 
 
 def parse_options():
@@ -15,39 +22,22 @@ def parse_options():
     parser.add_argument(
         '-t',
         '--target',
-        choices=['gitbook', 'vuepress', 'docsify', 'mkdocs', 'single-markdown'],
+        choices=['single-markdown'],
         help='markdown type',
         default='single-markdown',
     )
     parser.add_argument('-i', '--input', help='Path to doxygen generated xml folder')
     parser.add_argument('-o', '--output', help='Path to the destination folder')
     parser.add_argument(
-        '-s',
-        '--summary',
-        type=str,
-        help='Path to the summary file which contains a link to index.md in the folder pointed by --input (default: false)',
-    )
-    parser.add_argument(
         '-l',
         '--link-prefix',
         type=str,
-        help='Adds a prefix to all links. You can use this to specify an absolute path if necessary. Docsify might need this. (default: "")',
+        help='Adds a prefix to all links. '
+        'You can use this to specify an absolute path if necessary. Docsify might need this. (default: "")',
         default='',
     )
     parser.add_argument(
         '-d', '--debug', type=bool, help='Debug the class hierarchy (default: false)', required=False, default=False
-    )
-    parser.add_argument(
-        '--hints',
-        type=bool,
-        help='(Vuepress only) If set to true, hints will be generated for the sections note, bug, and a warning (default: true)',
-        default=True,
-    )
-    parser.add_argument(
-        '--ignoreerrors',
-        type=bool,
-        help='If set to true, will continue to generate Markdown files even if an error has been detected (default: false)',
-        default=False,
     )
     parser.add_argument(
         '--template-dir',
@@ -107,17 +97,11 @@ def main():
     if args.input is None or args.output is None:
         raise ValueError('-i/--input and -o/--output are required')
 
-    if args.target == 'gitbook' and args.summary and not os.path.exists(args.summary):
-        raise Exception('The provided summary file does not exist!')
-
     run(
         input_dir=args.input,
         output=args.output,
-        target=args.target,
-        hints=args.hints,
+        target=args.target or 'single-markdown',
         debug=args.debug,
-        ignore_errors=args.ignoreerrors,
-        summary=args.summary,
         link_prefix=args.link_prefix,
         template_dir=args.template_dir,
         template_lang=args.template_lang,
