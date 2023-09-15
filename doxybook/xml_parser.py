@@ -343,7 +343,7 @@ class XmlParser:
                 ret.append(MdItalic(self.paras(item)))
 
             # End of the item text
-            if item.tail.strip():
+            if item.tail and item.tail.strip():
                 if italic:
                     ret.append(Text(' '))
                     ret.append(MdItalic([Text(item.tail.strip())]))
