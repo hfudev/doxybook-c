@@ -56,9 +56,16 @@ select = [
     'F',  # Pyflakes
     'E',  # pycodestyle
     'W',  # pycodestyle
+    'PL',  # pylint
 ]
 line-length = 120
 target-version = "py37"
+extend-ignore = [
+    "PLR0911",  # too-many-return-statements
+    "PLR0912",  # too-many-branches
+    "PLR0913",  # too-many-arguments
+    "PLR0915",  # too-many-statements
+]
 
 [tool.commitizen]
 name = "cz_conventional_commits"

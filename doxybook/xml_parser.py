@@ -1,4 +1,6 @@
-from xml.etree.ElementTree import Element as Element
+from xml.etree.ElementTree import (
+    Element,
+)
 
 from doxybook.cache import (
     Cache,
@@ -191,7 +193,7 @@ class XmlParser:
                 ret.append(MdHeader(int(item.get('level')), self.paras(item)))
 
             # orderedlist
-            elif item.tag == 'orderedlist' or item.tag == 'itemizedlist':
+            elif item.tag in ('orderedlist', 'itemizedlist'):
                 lst = MdList([])
                 for listitem in item.findall('listitem'):
                     i = MdParagraph([])
@@ -210,11 +212,10 @@ class XmlParser:
                             ret.append(MdLink([MdItalic([MdBold([Text(item.text)])])], ref.relative_link))
                         else:
                             ret.append(MdLink([MdItalic([MdBold([Text(ref.get_full_name())])])], ref.relative_link))
+                    elif item.text:
+                        ret.append(MdLink([MdBold([Text(item.text)])], ref.relative_link))
                     else:
-                        if item.text:
-                            ret.append(MdLink([MdBold([Text(item.text)])], ref.relative_link))
-                        else:
-                            ret.append(MdLink([MdBold([Text(ref.get_full_name())])], ref.relative_link))
+                        ret.append(MdLink([MdBold([Text(ref.get_full_name())])], ref.relative_link))
                 except Exception:
                     if item.text:
                         ret.append(Text(item.text))

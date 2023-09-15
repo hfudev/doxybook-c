@@ -93,7 +93,7 @@ class Kind(Enum):
         return self == Kind.INTERFACE
 
     def is_class_or_struct(self) -> bool:
-        return self == Kind.CLASS or self == Kind.STRUCT or self == Kind.INTERFACE
+        return self in (Kind.CLASS, Kind.STRUCT, Kind.INTERFACE)
 
     def is_typedef(self) -> bool:
         return self == Kind.TYPEDEF
@@ -143,12 +143,12 @@ class Kind(Enum):
         return False
 
     def is_parent(self) -> bool:
-        return (
-            self == Kind.NAMESPACE
-            or self == Kind.CLASS
-            or self == Kind.STRUCT
-            or self == Kind.UNION
-            or self == Kind.INTERFACE
+        return self in (
+            Kind.NAMESPACE,
+            Kind.CLASS,
+            Kind.STRUCT,
+            Kind.UNION,
+            Kind.INTERFACE,
         )
 
     def is_member(self) -> bool:

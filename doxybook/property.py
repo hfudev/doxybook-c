@@ -1,5 +1,7 @@
 import re
-from xml.etree.ElementTree import Element as Element
+from xml.etree.ElementTree import (
+    Element,
+)
 
 from doxybook.constants import (
     Kind,
@@ -82,11 +84,10 @@ class Property:
 
                 if includes.get('local') == 'yes':
                     ret.append('"' + incl + '"')
+                elif plain:
+                    ret.append('<' + incl + '>')
                 else:
-                    if plain:
-                        ret.append('<' + incl + '>')
-                    else:
-                        ret.append('&lt;' + incl + '&gt;')
+                    ret.append('&lt;' + incl + '&gt;')
             return ret
 
         def has(self) -> bool:
