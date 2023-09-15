@@ -1,10 +1,21 @@
 import os
-from xml.etree import ElementTree
+from xml.etree import (
+    ElementTree,
+)
 
-from doxybook.cache import Cache
-from doxybook.constants import Kind, Visibility
-from doxybook.node import Node
-from doxybook.xml_parser import XmlParser
+from doxybook.cache import (
+    Cache,
+)
+from doxybook.constants import (
+    Kind,
+    Visibility,
+)
+from doxybook.node import (
+    Node,
+)
+from doxybook.xml_parser import (
+    XmlParser,
+)
 
 
 class Doxygen:
@@ -38,7 +49,7 @@ class Doxygen:
                 self.root.add_child(node)
             elif kind == Kind.GROUP:
                 self.groups.add_child(node)
-            elif kind == Kind.FILE or kind == Kind.DIR:
+            elif kind in (Kind.FILE, Kind.DIR):
                 self.files.add_child(node)
                 if node.is_header_file:
                     self.header_files.add_child(node)

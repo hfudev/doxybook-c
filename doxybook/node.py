@@ -3,7 +3,9 @@ import typing as t
 from xml.etree import (
     ElementTree,
 )
-from xml.etree.ElementTree import Element as Element
+from xml.etree.ElementTree import (
+    Element,
+)
 
 from doxybook.cache import (
     Cache,
@@ -106,7 +108,7 @@ class Node:
     def _check_for_children(self):
         for innergroup in self._xml.findall('innergroup'):
             refid = innergroup.get('refid')
-            if self._kind == Kind.GROUP or self._kind == Kind.DIR or self._kind == Kind.FILE:
+            if self._kind in (Kind.GROUP, Kind.DIR, Kind.FILE):
                 try:
                     child = self._cache.get(refid)
                     self.add_child(child)
@@ -130,7 +132,7 @@ class Node:
             if prot == Visibility.PRIVATE:
                 continue
 
-            if self._kind == Kind.GROUP or self._kind == Kind.DIR or self._kind == Kind.FILE:
+            if self._kind in (Kind.GROUP, Kind.DIR or self._kind == Kind.FILE):
                 try:
                     child = self._cache.get(refid)
                     self.add_child(child)
@@ -206,7 +208,7 @@ class Node:
         for innernamespace in self._xml.findall('innernamespace'):
             refid = innernamespace.get('refid')
 
-            if self._kind == Kind.GROUP or self._kind == Kind.DIR or self._kind == Kind.FILE:
+            if self._kind in (Kind.GROUP, Kind.DIR or self._kind == Kind.FILE):
                 try:
                     child = self._cache.get(refid)
                     self.add_child(child)
@@ -229,7 +231,7 @@ class Node:
             for memberdef in sectiondef.findall('memberdef'):
                 kind = Kind.from_str(memberdef.get('kind'))
                 if kind.is_language():
-                    if self._kind == Kind.GROUP or self._kind == Kind.DIR or self._kind == Kind.FILE:
+                    if self._kind in (Kind.GROUP, Kind.DIR, Kind.FILE):
                         refid = memberdef.get('id')
                         try:
                             child = self._cache.get(refid)
@@ -267,7 +269,7 @@ class Node:
 
         virt = self._xml.get('virt')
         if virt:
-            self._virtual = virt == 'virtual' or virt == 'pure-virtual'
+            self._virtual = virt in ('virtual', 'pure-virtual')
             self._pure = virt == 'pure-virtual'
         else:
             self._virtual = False
