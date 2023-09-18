@@ -200,6 +200,7 @@ class XmlParser:
                     for para in listitem.findall('para'):
                         i.extend(self.paras(para))
                     lst.append(i)
+                ret.append(Text('\n'))  # in case there's no extra blank line before the list
                 ret.append(lst)
 
             # Reference
