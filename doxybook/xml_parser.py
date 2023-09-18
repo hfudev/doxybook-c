@@ -325,8 +325,7 @@ class XmlParser:
             # End of the item text
             if item.tail and item.tail.strip():
                 if italic:
-                    ret.append(Text(' '))
-                    ret.append(MdItalic([Text(item.tail.strip())]))
+                    ret.append(MdItalic([Text(item.tail.rstrip())]))
                 else:
-                    ret.append(Text(item.tail.strip()))
+                    ret.append(Text(item.tail.rstrip()))
         return ret
