@@ -23,7 +23,7 @@ Needs up to 100MiB of memory. Parsing super large projects can use up to 0.5GiB 
 
 ```yaml
 - repo: https://github.com/espressif/doxybook
-  rev: v0.2.0
+  rev: v0.2.1
   hooks:
     - id: doxygen-api-md
 ```
@@ -40,7 +40,7 @@ Then you need to set the path in the pre-commit config like this:
 
 ```yaml
 - repo: https://github.com/espressif/doxybook
-  rev: v0.2.0
+  rev: v0.2.1
   hooks:
     - id: doxygen-api-md
       args: ["-i", "doxygen_output/xml", "-o", "docs/api.md"]
