@@ -15,6 +15,9 @@ from doxybook.constants import (
 from doxybook.runner import (
     run,
 )
+from doxybook.utils import (
+    error,
+)
 
 
 def parse_options():
@@ -91,8 +94,12 @@ def main():
 
     doxygen_cmd = [doxygen_bin]
     doxygen_cmd.extend(shlex.split(args.doxygen_extra_args))
-    print(f"Running {' '.join(doxygen_cmd)}")
-    subprocess.run(doxygen_cmd, stderr=sys.stderr, stdout=sys.stdout, check=True)
+
+    proc = subprocess.run(doxygen_cmd, capture_output=True)  # noqa: PLW1510
+    if proc.returncode != 0:
+        error(f'Failed to run command \"{" ".join(doxygen_cmd)}\":')
+        error(proc.stderr.decode('utf-8'))
+        sys.exit(1)
 
     if args.input is None or args.output is None:
         raise ValueError('-i/--input and -o/--output are required')

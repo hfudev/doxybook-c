@@ -1,4 +1,6 @@
+import enum
 import subprocess
+import sys
 
 
 # Credits: https://stackoverflow.com/a/1630350
@@ -65,3 +67,30 @@ def get_git_revision_hash() -> str:
         return subprocess.check_output(['git', 'rev-parse', 'HEAD']).decode('ascii').strip()
     except subprocess.CalledProcessError:
         return ''
+
+
+class ColoredPrinter(enum.Enum):
+    grey: str = '\x1b[37;20m'
+    yellow: str = '\x1b[33;20m'
+    red: str = '\x1b[31;20m'
+
+    reset: str = '\x1b[0m'
+
+
+def _color_fmt(msg: str, color: ColoredPrinter) -> str:
+    if sys.platform == 'win32':  # does not support it
+        return msg
+
+    return color.value + msg + ColoredPrinter.reset.value
+
+
+def info(msg: str) -> None:
+    print(_color_fmt(msg, ColoredPrinter.grey))
+
+
+def warning(msg: str) -> None:
+    print(_color_fmt(msg, ColoredPrinter.yellow))
+
+
+def error(msg: str) -> None:
+    print(_color_fmt(msg, ColoredPrinter.red))
