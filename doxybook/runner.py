@@ -1,4 +1,6 @@
 import os
+import shutil
+import tempfile
 import time
 import typing as t
 
@@ -31,7 +33,7 @@ def run(
     link_prefix: str = '',
     template_dir: t.Optional[str] = None,
     template_lang: t.Optional[str] = 'c',
-):
+) -> bool:
     if output.endswith('.md'):
         os.makedirs(os.path.dirname(output), exist_ok=True)
         output_filepath = output
@@ -55,7 +57,7 @@ def run(
     template_lang = template_lang or 'c'
 
     env = Environment(loader=loader, autoescape=select_autoescape())
-    with open(output_filepath, 'w') as fw:
+    with tempfile.NamedTemporaryFile(mode='w', delete=False) as fw:
         template = env.get_template('api.jinja')
         files = doxygen.header_files.children
         common_args = {
@@ -67,5 +69,17 @@ def run(
             'asctime': time.asctime(),
         }
         fw.write(template.render(**common_args))
+        fw.flush()
 
-    print(f'Generated single-markdown API reference: {output_filepath}')
+        if os.path.isfile(output_filepath) and open(output_filepath).read() == open(fw.name).read():
+            print(f'No changes detected in {output_filepath}')
+            return False
+
+        if not os.path.isfile(output_filepath):
+            print(f'Generated single-markdown API reference: {output_filepath}')
+            shutil.move(fw.name, output_filepath)
+            return True
+
+        print(f'Updated single-markdown API reference: {output_filepath}')
+        shutil.move(fw.name, output_filepath)
+        return True
