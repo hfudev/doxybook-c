@@ -39,6 +39,7 @@ Source = "https://github.com/espressif/doxybook"
 
 [project.scripts]
 esp-doxybook = "doxybook.__main__:main"
+esp-doxybook-pre-commit = "doxybook.__main__:main_pre_commit"
 
 [tool.flit.module]
 name = "doxybook"

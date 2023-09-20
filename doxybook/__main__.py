@@ -15,6 +15,9 @@ from doxybook.constants import (
 from doxybook.runner import (
     run,
 )
+from doxybook.utils import (
+    error,
+)
 
 
 def parse_options():
@@ -71,7 +74,7 @@ def parse_options():
     return args
 
 
-def main():
+def _main() -> bool:
     args = parse_options()
     if args.action:
         if os.path.isfile(args.output_dir):
@@ -91,13 +94,17 @@ def main():
 
     doxygen_cmd = [doxygen_bin]
     doxygen_cmd.extend(shlex.split(args.doxygen_extra_args))
-    print(f"Running {' '.join(doxygen_cmd)}")
-    subprocess.run(doxygen_cmd, stderr=sys.stderr, stdout=sys.stdout, check=True)
+
+    proc = subprocess.run(doxygen_cmd, capture_output=True)  # noqa: PLW1510
+    if proc.returncode != 0:
+        error(f'Failed to run command \"{" ".join(doxygen_cmd)}\":')
+        error(proc.stderr.decode('utf-8'))
+        sys.exit(1)
 
     if args.input is None or args.output is None:
         raise ValueError('-i/--input and -o/--output are required')
 
-    run(
+    return run(
         input_dir=args.input,
         output=args.output,
         target=args.target or 'single-markdown',
@@ -106,6 +113,16 @@ def main():
         template_dir=args.template_dir,
         template_lang=args.template_lang,
     )
+
+
+def main_pre_commit():
+    if _main():
+        print('Please stage the modified file and run "git commit" again')
+        sys.exit(1)
+
+
+def main():
+    _main()
 
 
 if __name__ == '__main__':
