@@ -3,6 +3,9 @@ import shutil
 import tempfile
 import time
 import typing as t
+from pathlib import (
+    Path,
+)
 
 from jinja2 import (
     Environment,
@@ -35,7 +38,7 @@ def run(
     template_lang: t.Optional[str] = 'c',
 ) -> bool:
     if output.endswith('.md'):
-        os.makedirs(os.path.dirname(output), exist_ok=True)
+        Path(output).parent.mkdir(parents=True, exist_ok=True)
         output_filepath = output
     else:
         os.makedirs(output, exist_ok=True)
