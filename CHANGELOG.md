@@ -1,5 +1,12 @@
 # Changelog
 
+## v0.2.2 (2024-10-25)
+
+### Fix
+
+- excape pipe symbol in the markdown table
+- will create the file correctly when only pass the filename
+
 ## v0.2.1 (2023-09-20)
 
 ### Fix
